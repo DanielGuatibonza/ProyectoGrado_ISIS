@@ -28,6 +28,7 @@ public class Command_DATA extends Command {
 		if(args[1].charAt(0) == '!') {
 			i=3;
 		}
+		// m = Hola#id#pub
 		while(i<args.length-1) {
 			packet += sensor.getScript().getVariableValue(args[i]) + symbole;
 			i++;

@@ -1,6 +1,5 @@
 package senscript;
 
-
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -15,41 +14,13 @@ public final class SenScriptAddCommand {
 			return s.replaceFirst("\\(", " (");
 		return s;
 	}
-	
-	public static String [] argSplit(String v) {
-		//System.out.println(v);
-		ArrayList<String> t = new ArrayList<String>();
-		while(!v.isEmpty()) {
-			//System.out.println("----> "+v);
-			String s = "";
-			v = v.trim();
-			if(v.charAt(0)=='\"') {
-				s = v.substring(0, v.substring(1).indexOf('\"')+2);
-				v = v.substring(s.length());
-			}
-			else {
-				s = v.split(" ")[0];
-				if(v.split(" ").length>1)
-					v = v.substring(s.length()+1);
-				else
-					v = "";
-			}
-			t.add(s);
-		}
-		String [] r = new String [t.size()];
-		int i = 0;
-		for(String e : t) {
-			r[i++] = e;
-		}
-		//System.out.println("------");
-		return r;
-	}
-	
+
 	public static void addCommand(String instStr, SensorNode sensorNode, SenScript script) {
 		if(instStr.trim().equals("")) return;
 		instStr = detectKeyWord(instStr);
-		//String[] inst = instStr.split(" ");
-		String[] inst = argSplit(instStr);
+
+		// Modificación, eliminar método argsSplit.
+		String[] inst = instStr.split(" ");
 		
 		if(inst[0].split(":").length>1) {
 			sensorNode.getScript().addLabel(inst[0].split(":")[0], sensorNode.getScript().size()+1);			
@@ -351,7 +322,6 @@ public final class SenScriptAddCommand {
 			}
 			script.add(commandWhile);
 			script.setCurrentWhile(commandWhile);
-			int x= 0;
 		}		 
 		if (inst[0].toLowerCase().equals("endwhile")) {
 			Command_ENDWHILE commandWEndhile = new Command_ENDWHILE(sensorNode);
@@ -465,6 +435,40 @@ public final class SenScriptAddCommand {
 		if (inst[0].toLowerCase().equals("cprint")) {
 			command = new Command_CPRINT(sensorNode, inst);
 		}
+		
+		
+		/*
+		 * Comandos propios
+		 */
+		
+		if (inst[0].toLowerCase().equals("cipher")) {
+			command = new Command_CIPHER(sensorNode, inst[1], inst[2], inst[3], inst[4]);
+		}
+		if (inst[0].toLowerCase().equals("decipher")) {
+			command = new Command_DECIPHER(sensorNode, inst[1], inst[2], inst[3], inst[4]);
+		}
+		
+		// Generar llaves públicas y privadas de un solo sensor
+		if (inst[0].toLowerCase().equals("keysecc")) {
+			command = new Command_KEYS_ECC(sensorNode, inst[1], inst[2]);
+		}
+		
+		if(inst[0].toLowerCase().equals("secretecc")) {
+			command = new Command_SECRET_ECC(sensorNode, inst[1], inst[2], inst[3]);
+		}
+		
+		if(inst[0].toLowerCase().equals("keysrsa"))
+		{
+			command = new Command_KEYS_RSA(sensorNode, inst[1], inst[2]);
+		}
+		if(inst[0].toLowerCase().equals("rsae")) {
+			command = new Command_RSAE(sensorNode, inst[1], inst[2]);
+		}
+		if(inst[0].toLowerCase().equals("rsad")) {
+			command = new Command_RSAD(sensorNode, inst[1], inst[2]);
+		}
+		
+		
 		
 		//-------
 		// This part must be here (at the end). All new commands must be added before (above)
