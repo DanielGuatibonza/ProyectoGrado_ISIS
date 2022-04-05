@@ -20,6 +20,7 @@ public class Command_CPRINT extends Command {
 		String part = "";
 		String message = "";
 		for (int i=1; i<arg.length; i++) {
+			System.out.println(arg[i]);
 			part = sensor.getScript().getVariableValue(arg[i]);
 			message += part + " ";
 		}

@@ -32,6 +32,7 @@ public class Command_KEYS_ECC extends Command {
 			byte[] v2= ECC.savePublicKey(pk);
 			sensor.getScript().addVariable(arg1, ECC.bytesToHex(v));
 			sensor.getScript().addVariable(arg2, ECC.bytesToHex(v2));
+			System.out.println("Llaves creadas");
 			return 0;
 		}
 		else {

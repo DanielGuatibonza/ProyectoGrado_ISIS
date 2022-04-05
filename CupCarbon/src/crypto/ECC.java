@@ -133,15 +133,15 @@ public class ECC
 			KeyPair pairA = kpgen.generateKeyPair();
 			Key[] llaves= {pairA.getPrivate(),pairA.getPublic()};
 			
-			File myObj = new File("docs/llavesECC.txt");
-			if (myObj.createNewFile()) {
-				FileWriter myWriter = new FileWriter("docs/llavesECC.txt");
-			      myWriter.write("Llave pública ECC: "+pairA.getPublic().getEncoded().length+"bytes");
-			      myWriter.write("Llave privada ECC: "+pairA.getPrivate().getEncoded().length+"bytes");
-			      myWriter.close();
-			} else {
-				
-			}
+//			File myObj = new File("docs/llavesECC.txt");
+//			if (myObj.createNewFile()) {
+//				FileWriter myWriter = new FileWriter("docs/llavesECC.txt");
+//			      myWriter.write("Llave pública ECC: "+pairA.getPublic().getEncoded().length+"bytes");
+//			      myWriter.write("Llave privada ECC: "+pairA.getPrivate().getEncoded().length+"bytes");
+//			      myWriter.close();
+//			} else {
+//				
+//			}
 			return llaves;
 		}
 		catch (Exception e) {

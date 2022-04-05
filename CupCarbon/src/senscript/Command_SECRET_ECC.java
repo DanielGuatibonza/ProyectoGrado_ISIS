@@ -1,37 +1,38 @@
 package senscript;
-import java.security.Key;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 
 import crypto.*;
 
 import device.SensorNode;
-import simulation.WisenSimulation;
 
 public class Command_SECRET_ECC extends Command {
 
-	protected String arg1 = "" ;
-	protected String arg2 = "" ;
-	protected String arg3 = "" ;
+	protected String arg1 = "";
+	protected String arg2 = "";
+	protected String arg3 = "";
 
+	/**
+	 * Genera llave simétrica basado en llave pública del otro (arg1) y la privada propia (arg2).
+	 * @param sensor
+	 * @param arg1: Id otro.
+	 * @param arg2: Llave pública del otro.
+	 * @param arg3: Llave privada propia.
+	 */
 	public Command_SECRET_ECC(SensorNode sensor, String arg1, String arg2, String arg3) {
-		this.sensor = sensor ;
-		this.arg1 = arg1 ;
+		this.sensor = sensor;
+		this.arg1 = arg1;
 		this.arg2= arg2;
 		this.arg3= arg3;
-
 	}
 
 	@Override
 	public double execute() {
-		byte[] publicKey = ECC.hexStringToByteArray(sensor.getScript().getVariableValue(arg1));
+		byte[] llavePublicaOtro = ECC.hexStringToByteArray(sensor.getScript().getVariableValue(arg2));
 
-		if (publicKey !=null) {
-			String privateKey =sensor.getScript().getVariableValue(arg2);
-			byte[] secreto = ECC.doECDH(ECC.hexStringToByteArray(privateKey), publicKey);
+		if (llavePublicaOtro !=null) {
+			byte[] llavePrivadaPropia = ECC.hexStringToByteArray(sensor.getScript().getVariableValue(arg3));
+			byte[] secreto = ECC.doECDH(llavePrivadaPropia, llavePublicaOtro);
 			System.out.println("Tamaño llave simétrica: "+secreto.length);
-			String v = ECC.bytesToHex(secreto) ;
-			sensor.getScript().addVariable(arg3, v);
+			ECCKeys_Manager.agregarLlaveCompartida(sensor.getId(), Integer.parseInt(sensor.getScript().getVariableValue(arg1)), secreto);
 			return 0;
 		}
 		else {

@@ -442,10 +442,10 @@ public final class SenScriptAddCommand {
 		 */
 		
 		if (inst[0].toLowerCase().equals("cipher")) {
-			command = new Command_CIPHER(sensorNode, inst[1], inst[2], inst[3], inst[4]);
+			command = new Command_CIPHER(sensorNode, inst[1], inst[2], inst[3]);
 		}
 		if (inst[0].toLowerCase().equals("decipher")) {
-			command = new Command_DECIPHER(sensorNode, inst[1], inst[2], inst[3], inst[4]);
+			command = new Command_DECIPHER(sensorNode, inst[1], inst[2], inst[3]);
 		}
 		
 		// Generar llaves públicas y privadas de un solo sensor
@@ -467,7 +467,12 @@ public final class SenScriptAddCommand {
 		if(inst[0].toLowerCase().equals("rsad")) {
 			command = new Command_RSAD(sensorNode, inst[1], inst[2]);
 		}
-		
+		if(inst[0].toLowerCase().equals("sendcipher")) {
+			command = new Command_SEND_CIPHER(sensorNode, inst[1], inst[2]);
+		}
+		if(inst[0].toLowerCase().equals("recvdecipher")) {
+			command = new Command_SEND_CIPHER(sensorNode, inst[1], inst[2]);
+		}
 		
 		
 		//-------
