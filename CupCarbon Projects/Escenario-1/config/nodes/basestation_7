@@ -1,0 +1,12 @@
+List of parameters
+------------------------------------------
+device_type:4
+device_id:7
+device_longitude:-73.98359656333923
+device_latitude:5.029344182404703
+device_elevation:0.0
+device_radius:0.0
+device_hide:0
+device_draw_battery:false
+device_sensor_unit_radius:20.0
+device_script_file_name:estacion.csc

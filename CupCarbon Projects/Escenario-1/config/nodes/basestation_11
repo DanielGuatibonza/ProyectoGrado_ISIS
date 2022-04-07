@@ -1,0 +1,12 @@
+List of parameters
+------------------------------------------
+device_type:4
+device_id:11
+device_longitude:-73.00209045410156
+device_latitude:6.925745212318305
+device_elevation:0.0
+device_radius:0.0
+device_hide:0
+device_draw_battery:false
+device_sensor_unit_radius:20.0
+device_script_file_name:repetidor.csc
