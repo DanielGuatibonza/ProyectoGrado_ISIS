@@ -1,7 +1,4 @@
 package crypto;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.PublicKey;
 import java.security.PrivateKey;
@@ -11,7 +8,6 @@ import java.security.Security;
 import java.security.KeyPairGenerator;
 import java.security.KeyPair;
 import java.security.SecureRandom;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.ECGenParameterSpec;
 
 import javax.crypto.Cipher;
@@ -22,20 +18,10 @@ import javax.xml.bind.DatatypeConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.interfaces.ECPublicKey;
 import org.bouncycastle.jce.interfaces.ECPrivateKey;
-import org.bouncycastle.crypto.BufferedBlockCipher;
-import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.engines.AESEngine;
-import org.bouncycastle.crypto.modes.CBCBlockCipher;
-import org.bouncycastle.crypto.paddings.BlockCipherPadding;
-import org.bouncycastle.crypto.paddings.PKCS7Padding;
-import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECParameterSpec;
 import org.bouncycastle.jce.spec.ECPublicKeySpec;
 import org.bouncycastle.jce.spec.ECPrivateKeySpec;
-import org.bouncycastle.math.ec.ECPoint;
 
 public class ECC
 {
