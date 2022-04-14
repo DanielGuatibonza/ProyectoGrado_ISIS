@@ -10,6 +10,9 @@ public class Transaccion {
 	private Date timestamp;
 	private int tiempoTranscurrido;
 	
+	private double latitud;
+	private double longitud;
+	
 	private double pH;
 	private double temperatura;
 	private double terneza;
@@ -18,11 +21,13 @@ public class Transaccion {
 	private double colorA;
 	private double colorB;
 	
-	public Transaccion (int pIDSensor, Date pTimestamp, int pTiempoTranscurrido, double pPH, double pTemperatura,
+	public Transaccion (int pIDSensor, Date pTimestamp, int pTiempoTranscurrido, double pLatitud, double pLongitud, double pPH, double pTemperatura,
 						double pTerneza, double pMermaPorCoccion, double pColorL, double pColorA, double pColorB) {
 		idSensor = pIDSensor;
 		timestamp = pTimestamp;
 		tiempoTranscurrido = pTiempoTranscurrido;
+		latitud = pLatitud;
+		longitud = pLongitud;
 		pH = pPH;
 		temperatura = pTemperatura;
 		terneza = pTerneza;
@@ -43,12 +48,14 @@ public class Transaccion {
 		}
 		
 		tiempoTranscurrido = Integer.parseInt(partes[2].split(": ")[1]);
-		pH = Double.parseDouble(partes[3].split(": ")[1]);
-		temperatura = Double.parseDouble(partes[4].split(": ")[1]);
-		terneza = Double.parseDouble(partes[5].split(": ")[1]);
-		mermaPorCoccion = Double.parseDouble(partes[6].split(": ")[1]);
+		latitud = Double.parseDouble(partes[3].split(": ")[1]);
+		longitud = Double.parseDouble(partes[4].split(": ")[1]);
+		pH = Double.parseDouble(partes[5].split(": ")[1]);
+		temperatura = Double.parseDouble(partes[6].split(": ")[1]);
+		terneza = Double.parseDouble(partes[7].split(": ")[1]);
+		mermaPorCoccion = Double.parseDouble(partes[8].split(": ")[1]);
 		
-		String colores = partes[7].split(": ")[1];
+		String colores = partes[9].split(": ")[1];
 		colores = colores.substring(1, colores.length() - 1);
 		String[] divisiones = colores.split(", ");
 		colorL = Double.parseDouble(divisiones[0].split(" = ")[1]);
@@ -58,9 +65,9 @@ public class Transaccion {
 	
 	@Override
 	public String toString () {
-		return "ID Sensor: " + idSensor + " | Timestamp: " + Bloque.FORMATO.format(timestamp) + " | Tiempo transcurrido: " + tiempoTranscurrido + " segundos | pH: " 
-				+ pH + " | " + temperatura + " °C | Terneza: " + terneza + " | Merma por cocción: " + mermaPorCoccion + " | Color: (L* = " + colorL + 
-				", a* = " + colorA + ", b* = " + colorB + ")";
+		return "ID Sensor: " + idSensor + " | Timestamp: " + Bloque.FORMATO.format(timestamp) + " | Tiempo transcurrido: " + tiempoTranscurrido + " segundos | Latitud: " + 
+				latitud + " | Longitud: " + longitud + " | pH: " + pH + " | Temperatura: " + temperatura + " °C | Terneza: " + terneza + " | Merma por cocción: " + mermaPorCoccion + 
+				" | Color: (L* = " + colorL + ", a* = " + colorA + ", b* = " + colorB + ")";
 	}
 
 	@Override

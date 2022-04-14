@@ -1,36 +1,52 @@
 package blockchain;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import blockchain.Bloque.Estado;
+import device.SensorNode;
 
 public class Blockchain extends Thread {
 
-	private int id;
-	private LinkedList<Bloque> bloques;
-	private boolean validarUltimoBloque;
-	private boolean reenviarTransaccion;
-	
-	public Blockchain (int pID)
-	{
-		id = pID;
-		validarUltimoBloque = false;
-		reenviarTransaccion = false;
-		bloques = new LinkedList<Bloque>();
-		bloques.add(new Bloque(this, ""));
+	private SensorNode estacion;
+	private ArrayList<Bloque> bloques;
+	private ArrayList<Transaccion> transaccionesTemporales;
+
+	public Blockchain (SensorNode pEstacion) {
+		estacion = pEstacion;
+		bloques = new ArrayList<Bloque>();
+		bloques.add(new Bloque(""));
+		transaccionesTemporales = new ArrayList<Transaccion>();
 	}
-	
+
+	@Override
 	public void run () {
-		
+
+		while (true) {
+			Bloque bloqueActual = bloques.get(bloques.size() - 1);
+			if (bloqueActual.darEstado().equals(Estado.ABIERTO)) {
+				bloqueActual.ejecutar();
+			}
+			else if (bloqueActual.darEstado().equals(Estado.EN_ESPERA)) {
+				if (bloqueActual.darConfirmaciones() > 4) {
+					bloqueActual.cerrarBloque();
+					Bloque nuevoBloque = new Bloque (bloqueActual.darHash());
+
+					for (Transaccion t: transaccionesTemporales) {
+						nuevoBloque.agregarTransaccion(t);
+					}
+					transaccionesTemporales = new ArrayList<Transaccion>();
+					bloques.add(nuevoBloque);
+				}
+				else {
+					try {
+						sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 	}
-	
-	public void cambiarValidacion (boolean pValidar) {
-		validarUltimoBloque = pValidar;
-	}
-	
-	public boolean darValidar () {
-		return validarUltimoBloque;
-	}
-	
+
 	public void recibirTransaccion (String pTransaccion) {
 		Transaccion temporal = new Transaccion (pTransaccion);
 		boolean encontrada = false;
@@ -46,17 +62,28 @@ public class Blockchain extends Thread {
 				break;
 			}
 		} 
-		
+
 		if (encontrada) {
-			reenviarTransaccion = false;
+			estacion.getScript().addVariable("reenviarTransaccion", "false");
 		}
 		else {
-			bloques.getLast().agregarTransaccion(temporal);
-			reenviarTransaccion = true;
+
+			Bloque ultimoBloque = bloques.get(bloques.size()-1);
+			if (ultimoBloque.darEstado().equals(Estado.ABIERTO)) {
+				ultimoBloque.agregarTransaccion(temporal);
+			}
+			else {
+				transaccionesTemporales.add(temporal);
+			}
+			estacion.getScript().addVariable("reenviarTransaccion", "true");
 		}
 	}
-	
+
+	public ArrayList<Bloque> darBloques () {
+		return bloques;
+	}
+
 	public void recibirConfirmacion () {
-		
+		bloques.get(bloques.size() - 1).incrementarConfirmaciones();
 	}
 }

@@ -45,7 +45,6 @@ public class Command_DECIPHER extends Command {
 		SecretKey llaveSimetricaServ = ECCKeys_Manager.darLlaveCompartida(this.sensor.getId(), Integer.parseInt(idN));
 		try {
 			
-			// Descifrar posición
 			byte[] textoClaro = ECC.descifrar(llaveSimetricaServ, ECC.hexStringToByteArray(sensor.getScript().getVariableValue(arg1)));
 			
 			String v = ECC.hexstringToString(ECC.bytesToHex(textoClaro)) ;

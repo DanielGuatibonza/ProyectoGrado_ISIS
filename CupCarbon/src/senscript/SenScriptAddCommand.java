@@ -1,8 +1,6 @@
 package senscript;
 
-import java.util.ArrayList;
 import java.util.Stack;
-
 import device.SensorNode;
 
 public final class SenScriptAddCommand {
@@ -473,8 +471,24 @@ public final class SenScriptAddCommand {
 		if(inst[0].toLowerCase().equals("recvdecipher")) {
 			command = new Command_SEND_CIPHER(sensorNode, inst[1], inst[2]);
 		}
-		
-		
+		if(inst[0].toLowerCase().equals("initblockchain")) {
+			command = new Command_INIT_BLOCKCHAIN(sensorNode);
+		}
+		if(inst[0].toLowerCase().equals("savedata")) {
+			command = new Command_SAVE_DATA(sensorNode, inst[1]);
+		}
+		if(inst[0].toLowerCase().equals("simulatepoint")) {
+			command = new Command_SIMULATE_POINT(sensorNode, inst[1]);
+		}
+		if(inst[0].toLowerCase().equals("updatetime")) {
+			command = new Command_UPDATE_TIME(sensorNode, inst[1]);
+		}
+		if(inst[0].toLowerCase().equals("waittime")) {
+			command = new Command_WAIT_TIME(sensorNode);
+		}
+		if(inst[0].toLowerCase().equals("validateblock")) {
+			command = new Command_VALIDATE(sensorNode, inst[1], inst[2], inst[3]);
+		}
 		//-------
 		// This part must be here (at the end). All new commands must be added before (above)
 		

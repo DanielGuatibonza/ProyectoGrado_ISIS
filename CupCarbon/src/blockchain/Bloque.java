@@ -1,14 +1,16 @@
 package blockchain;
 
+import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
 import org.bouncycastle.util.encoders.Hex;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
 
 public class Bloque {
 
@@ -33,42 +35,71 @@ public class Bloque {
 	
 	private MessageDigest digest;
 	
-	private Blockchain blockchain;
+	private ProofOfX proof;
 	
-	public Bloque(Blockchain pBlockchain, String pHashAnterior) {
-		blockchain = pBlockchain;
-		nonce = -(new Random()).nextInt(1000);
-		hashAnterior = pHashAnterior;
-		transacciones = new ArrayList<Transaccion> ();
-		transaccionesStr = "";
-		try {
+	public Bloque(String cadena) {
+		try (FileReader reader = new FileReader("data/tareas.json"))
+	    {
+			nonce = -(new Random()).nextInt(1000);
+			hashAnterior = cadena;
+			transacciones = new ArrayList<Transaccion> ();
+			transaccionesStr = "";
+			estado = Estado.ABIERTO;
 			digest = MessageDigest.getInstance("SHA-256");
-		} catch (NoSuchAlgorithmException e) {
+				
+			JSONParser jsonParser = new JSONParser();
+			Object obj = jsonParser.parse(reader);
+			JSONArray listaTareas = (JSONArray) obj;
+			
+			if (listaTareas.size() == 0){
+				proof = new ProofOfWork(this);
+			}
+			else {
+				proof = new ProofOfLearning();
+			}
+			
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public ArrayList<Transaccion> darTransacciones () {
-		return transacciones;
+	public int darConfirmaciones () {
+		return confirmaciones;
+	}
+	
+	public Estado darEstado () {
+		return estado;
+	}
+	
+	public String darHash () {
+		return hash;
+	}
+	
+	public String darHashAnterior () {
+		return hashAnterior;
 	}
 	
 	public int darNonce() {
 		return nonce;
 	}
 	
+	public ArrayList<Transaccion> darTransacciones () {
+		return transacciones;
+	}
+	
+	public void incrementarConfirmaciones () {
+		confirmaciones++;
+	}
+	
 	public void incrementarNonce () {
-		nonce ++;
+		nonce++;
 	}
 	
-	public void cerrarBloque (String hashFinal) {
-		hash = hashFinal;
+	public void cerrarBloque () {
 		estado = Estado.CERRADO;
+		timestamp = new Date ();
 	}
 	
-	public void establecerTimestamp () {
-		
-	}
-
 	public void agregarTransaccion (Transaccion nueva) {
 		transacciones.add(nueva);
 		transaccionesStr += nueva.toString() + "\n";
@@ -76,7 +107,12 @@ public class Bloque {
 		merkleRoot = new String(Hex.encode(encodedhash));
 	}
 	
+	public void ejecutar() {
+		hash = proof.ejecutar();
+		estado = Estado.EN_ESPERA;
+	}
+	
 	public String toString () {
-		return "Hash: " + hash + " | Transacciones: " + transaccionesStr + " | Merkle root: " + merkleRoot + " | Nonce: " + nonce + " | Hash anterior: " + hashAnterior;  
+		return "Timestamp: " + Bloque.FORMATO.format(timestamp) + " | Transacciones: " + transaccionesStr + " | Merkle root: " + merkleRoot + " | Nonce: " + nonce + " | Hash anterior: " + hashAnterior;  
 	}
 }

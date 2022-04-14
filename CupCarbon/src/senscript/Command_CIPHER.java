@@ -1,18 +1,12 @@
 package senscript;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
+import javax.crypto.SecretKey;
 import crypto.ECC;
 import crypto.ECCKeys_Manager;
 import device.SensorNode;
-import simulation.WisenSimulation;
 
 public class Command_CIPHER extends Command {
 
-	/**
-	 * Sensor
-	 */
-	protected SensorNode sensor;
 	
 	/**
 	 * Mensaje a cifrar

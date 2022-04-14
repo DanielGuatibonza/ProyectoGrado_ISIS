@@ -7,12 +7,11 @@ import java.security.NoSuchAlgorithmException;
 
 public class ProofOfWork implements ProofOfX {
 
-	private int dificultad;
+	public static final int DIFICULTAD = 5;
 	private Bloque bloque;
 	private MessageDigest digest;
 	
-	public ProofOfWork (int pDificultad, Bloque pBloque) {
-		dificultad = pDificultad;
+	public ProofOfWork (Bloque pBloque) {
 		bloque = pBloque;
 		
 		try {
@@ -23,23 +22,26 @@ public class ProofOfWork implements ProofOfX {
 	}
 	
 	@Override
-	public void ejecutar() {
+	public String ejecutar() {
 		boolean nonceEncontrado = false;
+		String hash = "";
+		String ceros = ""; 
+		for (int i = 0; i < DIFICULTAD; i++ ) {
+			ceros += "0";
+		}
 		while (!nonceEncontrado) {
 			byte[] encodedhash = digest.digest(bloque.toString().getBytes(StandardCharsets.UTF_8));
-			String hash = new String(Hex.encode(encodedhash));
-			String ceros = ""; 
-			for (int i = 0; i < dificultad; i++ ) {
-				ceros += "0";
-			}
+			hash = new String(Hex.encode(encodedhash));
 			if (hash.startsWith(ceros)) {
 				System.out.println("Hash " + hash);
 				nonceEncontrado = true;
 			}
 			else {
 				bloque.incrementarNonce();
+				return hash;
 			}
 		}
+		return hash;
 	}
 
 }
