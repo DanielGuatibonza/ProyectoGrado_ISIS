@@ -9,11 +9,12 @@ public class ProofOfWork implements ProofOfX {
 
 	public static final int DIFICULTAD = 5;
 	private Bloque bloque;
+	private boolean ejecutar;
 	private MessageDigest digest;
 	
 	public ProofOfWork (Bloque pBloque) {
 		bloque = pBloque;
-		
+		ejecutar = true;
 		try {
 			digest = MessageDigest.getInstance("SHA-256");
 		} catch (NoSuchAlgorithmException e) {
@@ -29,7 +30,7 @@ public class ProofOfWork implements ProofOfX {
 		for (int i = 0; i < DIFICULTAD; i++ ) {
 			ceros += "0";
 		}
-		while (!nonceEncontrado) {
+		while (!nonceEncontrado && ejecutar) {
 			byte[] encodedhash = digest.digest(bloque.toString().getBytes(StandardCharsets.UTF_8));
 			hash = new String(Hex.encode(encodedhash));
 			if (hash.startsWith(ceros)) {
@@ -41,7 +42,15 @@ public class ProofOfWork implements ProofOfX {
 				return hash;
 			}
 		}
+		if (!ejecutar) {
+			hash = null;
+		}
 		return hash;
+	}
+
+	@Override
+	public void detenerEjecucion() {
+		ejecutar = false;
 	}
 
 }

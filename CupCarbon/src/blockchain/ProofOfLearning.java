@@ -8,4 +8,10 @@ public class ProofOfLearning implements ProofOfX {
 		return "";
 	}
 
+	@Override
+	public void detenerEjecucion() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

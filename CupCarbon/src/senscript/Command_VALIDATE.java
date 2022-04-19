@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import org.bouncycastle.util.encoders.Hex;
 
+import blockchain.Blockchain;
 import blockchain.Bloque;
 import blockchain.ManejadorBlockchain;
 import blockchain.ProofOfWork;
@@ -39,9 +40,10 @@ public class Command_VALIDATE extends Command {
 	@Override
 	public synchronized double execute() {
 		
-		String[] partes = arg1.split(" | ");
+		String[] partes = arg1.split(" % ");
 		String hashAnterior = partes[partes.length - 1].split(": ")[1];
-		ArrayList<Bloque> bloques = ManejadorBlockchain.blockchains.get(sensor.getId()).darBloques();
+		Blockchain blockchain = ManejadorBlockchain.blockchains.get(sensor.getId());
+		ArrayList<Bloque> bloques = blockchain.darBloques();
 		MessageDigest digest;
 		
 		try {
@@ -57,6 +59,9 @@ public class Command_VALIDATE extends Command {
 				// TODO Detener ejecución del bloque y agregar el bloque recibido
 				if (hashActual.startsWith(ceros)) {
 					sensor.getScript().addVariable(arg3, arg2);
+					blockchain.detenerProof();
+					blockchain.reemplazarBloque(arg1);
+					
 				}
 				else {
 					sensor.getScript().addVariable(arg3, "");

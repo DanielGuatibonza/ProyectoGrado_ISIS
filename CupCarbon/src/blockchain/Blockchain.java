@@ -13,22 +13,27 @@ public class Blockchain extends Thread {
 	public Blockchain (SensorNode pEstacion) {
 		estacion = pEstacion;
 		bloques = new ArrayList<Bloque>();
-		bloques.add(new Bloque(""));
+		bloques.add(new Bloque("", true));
 		transaccionesTemporales = new ArrayList<Transaccion>();
+		
+		estacion.getScript().addVariable("bloqueNuevo", "");
+		estacion.getScript().addVariable("reenviarTransaccion", "false");
 	}
 
 	@Override
 	public void run () {
-
 		while (true) {
 			Bloque bloqueActual = bloques.get(bloques.size() - 1);
 			if (bloqueActual.darEstado().equals(Estado.ABIERTO)) {
-				bloqueActual.ejecutar();
+				boolean bloqueGenerado = bloqueActual.ejecutar();
+				if (bloqueGenerado) {
+					estacion.getScript().addVariable("bloqueNuevo", bloqueActual.toString());
+				} 				
 			}
 			else if (bloqueActual.darEstado().equals(Estado.EN_ESPERA)) {
 				if (bloqueActual.darConfirmaciones() > 4) {
 					bloqueActual.cerrarBloque();
-					Bloque nuevoBloque = new Bloque (bloqueActual.darHash());
+					Bloque nuevoBloque = new Bloque (bloqueActual.darHash(), true);
 
 					for (Transaccion t: transaccionesTemporales) {
 						nuevoBloque.agregarTransaccion(t);
@@ -67,7 +72,6 @@ public class Blockchain extends Thread {
 			estacion.getScript().addVariable("reenviarTransaccion", "false");
 		}
 		else {
-
 			Bloque ultimoBloque = bloques.get(bloques.size()-1);
 			if (ultimoBloque.darEstado().equals(Estado.ABIERTO)) {
 				ultimoBloque.agregarTransaccion(temporal);
@@ -85,5 +89,17 @@ public class Blockchain extends Thread {
 
 	public void recibirConfirmacion () {
 		bloques.get(bloques.size() - 1).incrementarConfirmaciones();
+	}
+	
+	public void detenerProof () {
+		Bloque ultimo = bloques.get(bloques.size() - 1);
+		if (ultimo.darEstado().equals(Bloque.Estado.ABIERTO)) {
+			ultimo.detenerEjecucion();
+			bloques.remove(bloques.size() - 1);
+		}
+	}
+	
+	public void reemplazarBloque (String bloqueStr) {
+		Bloque nuevoBloque = new Bloque (bloqueStr, false);
 	}
 }
