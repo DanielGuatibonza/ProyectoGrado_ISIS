@@ -60,8 +60,7 @@ public class Command_VALIDATE extends Command {
 				if (hashActual.startsWith(ceros)) {
 					sensor.getScript().addVariable(arg3, arg2);
 					blockchain.detenerProof();
-					blockchain.reemplazarBloque(arg1);
-					
+					blockchain.reemplazarBloque(arg1, hashAnterior, hashActual);	
 				}
 				else {
 					sensor.getScript().addVariable(arg3, "");

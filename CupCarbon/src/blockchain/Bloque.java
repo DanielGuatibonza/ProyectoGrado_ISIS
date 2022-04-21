@@ -16,6 +16,7 @@ public class Bloque {
 
 	public final static SimpleDateFormat FORMATO = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
 
+	private int idEstacion;
 	private String hash;
 	private String hashAnterior;
 	private Date timestamp;
@@ -37,11 +38,11 @@ public class Bloque {
 
 	private ProofOfX proof;
 
-	"Transacciones: " + transaccionesStr + " | Merkle root: " + merkleRoot + " | Nonce: " + nonce + " | Hash anterior: " + hashAnterior;  				
 
-	public Bloque(String hash) {
+	public Bloque(String hash, int pIdEstacion) {
 		try (FileReader reader = new FileReader("data/tareas.json"))
 		{
+			idEstacion = pIdEstacion;
 			nonce = -(new Random()).nextInt(1000);
 			transacciones = new ArrayList<Transaccion> ();
 			transaccionesStr = "";
@@ -58,6 +59,7 @@ public class Bloque {
 			else {
 				proof = new ProofOfLearning();
 			}
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -65,17 +67,36 @@ public class Bloque {
 	}
 
 	public Bloque(String cadena, String hash) {
-		transacciones = new ArrayList<Transaccion> ();
-		transaccionesStr = "";
-		estado = Estado.CERRADO;
-		digest = MessageDigest.getInstance("SHA-256");
-		String[] partes = cadena.split(" % ");
-		
-		String transaccionesStr = partes[0].split(": ")[1];
-		String[] transacciones = transaccionesStr.split("&");
-		for (int i = 0; i < transacciones.length; i++) {
+		try {
+			transacciones = new ArrayList<Transaccion> ();
+			estado = Estado.CERRADO;
+			digest = MessageDigest.getInstance("SHA-256");
+			String[] partes = cadena.split(" % ");
+			transaccionesStr = partes[0].split(": ")[1];
+			String[] pTransacciones = transaccionesStr.split("&");
+			for (int i = 0; i < pTransacciones.length; i++) {
+				transacciones.add(new Transaccion(pTransacciones[i]));
+			}
+			merkleRoot = partes[1].split(": ")[1];
+			nonce = Integer.parseInt(partes[2].split(": ")[1]);
 			
+			if (partes[3].split(": ")[1].startsWith("Proof of Work")) {
+				proof = new ProofOfWork(this);
+			}
+			else {
+				proof = new ProofOfLearning();
+			}
+			
+			idEstacion = Integer.parseInt(partes[4].split(": ")[1]);
+			hashAnterior = partes[partes.length - 1].split(": ")[1];
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+
+	}
+	
+	public int darIDEstacion () {
+		return idEstacion;
 	}
 
 	public int darConfirmaciones () {
@@ -97,6 +118,10 @@ public class Bloque {
 	public int darNonce() {
 		return nonce;
 	}
+	
+	public String darTimestamp () {
+		return FORMATO.format(timestamp);
+	}
 
 	public ArrayList<Transaccion> darTransacciones () {
 		return transacciones;
@@ -105,11 +130,15 @@ public class Bloque {
 	public void incrementarConfirmaciones () {
 		confirmaciones++;
 	}
-	
-	public void establecerTimestamp (String pTimestamp) {
-		timestamp = FORMATO.parse(pTimestamp);
+
+	public void establecerTimestamp (Date pTimestamp) {
+		timestamp = pTimestamp;
 	}
 	
+	public void establecerHash (String pHash) {
+		hash = pHash;
+	}
+
 	public void incrementarNonce () {
 		nonce++;
 	}
@@ -144,7 +173,8 @@ public class Bloque {
 		proof.detenerEjecucion();
 	}
 
+	@Override
 	public String toString () {
-		return "Transacciones: " + transaccionesStr + " % Merkle root: " + merkleRoot + " % Nonce: " + nonce + " % Hash anterior: " + hashAnterior;  
+		return "Transacciones: " + transaccionesStr + " % Merkle root: " + merkleRoot + " % Nonce: " + nonce + " % Proof: " + proof.toString() + " % ID Estación: " + idEstacion + " % Hash anterior: " + hashAnterior;  
 	}
 }

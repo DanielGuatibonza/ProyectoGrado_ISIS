@@ -1,6 +1,8 @@
 package blockchain;
 
 import java.util.ArrayList;
+import java.util.Date;
+
 import blockchain.Bloque.Estado;
 import device.SensorNode;
 
@@ -13,11 +15,12 @@ public class Blockchain extends Thread {
 	public Blockchain (SensorNode pEstacion) {
 		estacion = pEstacion;
 		bloques = new ArrayList<Bloque>();
-		bloques.add(new Bloque("", true));
+		bloques.add(new Bloque("", estacion.getId()));
 		transaccionesTemporales = new ArrayList<Transaccion>();
 		
 		estacion.getScript().addVariable("bloqueNuevo", "");
 		estacion.getScript().addVariable("reenviarTransaccion", "false");
+		estacion.getScript().addVariable("timestampUltimo", "");
 	}
 
 	@Override
@@ -33,8 +36,11 @@ public class Blockchain extends Thread {
 			else if (bloqueActual.darEstado().equals(Estado.EN_ESPERA)) {
 				if (bloqueActual.darConfirmaciones() > 4) {
 					bloqueActual.cerrarBloque();
-					Bloque nuevoBloque = new Bloque (bloqueActual.darHash(), true);
+					bloqueActual.establecerTimestamp(new Date());
+					estacion.getScript().addVariable("timestampUltimo", bloqueActual.darTimestamp());
 
+					Bloque nuevoBloque = new Bloque (bloqueActual.darHash(), estacion.getId());
+					
 					for (Transaccion t: transaccionesTemporales) {
 						nuevoBloque.agregarTransaccion(t);
 					}
@@ -99,7 +105,10 @@ public class Blockchain extends Thread {
 		}
 	}
 	
-	public void reemplazarBloque (String bloqueStr) {
-		Bloque nuevoBloque = new Bloque (bloqueStr, false);
+	public void reemplazarBloque (String bloqueStr, String hashAnterior, String hashUltimo) {
+		Bloque nuevoBloque = new Bloque (bloqueStr, hashAnterior);
+		nuevoBloque.establecerHash(hashUltimo);
+		bloques.add(nuevoBloque);
+		bloques.add(new Bloque (hashUltimo, estacion.getId()));
 	}
 }

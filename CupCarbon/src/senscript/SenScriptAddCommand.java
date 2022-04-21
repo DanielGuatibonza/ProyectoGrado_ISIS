@@ -489,6 +489,9 @@ public final class SenScriptAddCommand {
 		if(inst[0].toLowerCase().equals("validateblock")) {
 			command = new Command_VALIDATE(sensorNode, inst[1], inst[2], inst[3]);
 		}
+		if(inst[0].toLowerCase().equals("settimestamp")) {
+			command = new Command_SET_TIMESTAMP(sensorNode, inst[1], inst[2]);
+		}
 		//-------
 		// This part must be here (at the end). All new commands must be added before (above)
 		
