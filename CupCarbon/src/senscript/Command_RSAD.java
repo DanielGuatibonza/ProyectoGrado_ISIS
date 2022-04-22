@@ -1,19 +1,10 @@
 package senscript;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
-
-import crypto.ECC;
 import crypto.PK;
 import device.SensorNode;
-import simulation.WisenSimulation;
 
 public class Command_RSAD extends Command {
 

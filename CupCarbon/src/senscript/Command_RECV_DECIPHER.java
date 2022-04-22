@@ -1,7 +1,6 @@
 package senscript;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 import crypto.ECC;
 import crypto.ECCKeys_Manager;

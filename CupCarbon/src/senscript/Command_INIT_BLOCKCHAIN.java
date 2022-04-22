@@ -12,8 +12,9 @@ public class Command_INIT_BLOCKCHAIN extends Command {
 	
 	@Override
 	public synchronized double execute() {
-		
-		ManejadorBlockchain.blockchains.put(this.sensor.getId(), new Blockchain (sensor));
+		Blockchain nuevaBlockchain = new Blockchain (sensor);
+		ManejadorBlockchain.blockchains.put(this.sensor.getId(), nuevaBlockchain);
+		nuevaBlockchain.start();
 		return 0;
 	}
 

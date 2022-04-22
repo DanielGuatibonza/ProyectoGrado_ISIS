@@ -1,15 +1,11 @@
 package senscript;
-import java.security.Key;
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.Base64;
 
 import crypto.*;
 
 import device.SensorNode;
-import simulation.WisenSimulation;
 
 public class Command_KEYS_RSA extends Command {
 

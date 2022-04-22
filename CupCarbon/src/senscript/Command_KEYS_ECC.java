@@ -6,7 +6,6 @@ import java.security.PublicKey;
 import crypto.*;
 
 import device.SensorNode;
-import simulation.WisenSimulation;
 
 public class Command_KEYS_ECC extends Command {
 

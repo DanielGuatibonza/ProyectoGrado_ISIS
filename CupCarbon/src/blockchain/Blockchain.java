@@ -61,9 +61,11 @@ public class Blockchain extends Thread {
 	public void recibirTransaccion (String pTransaccion) {
 		Transaccion temporal = new Transaccion (pTransaccion);
 		boolean encontrada = false;
-		for (Bloque b: bloques) {
+		for (int i=bloques.size()-1; i>=0; i--) {
+			Bloque b = bloques.get(i);
 			ArrayList<Transaccion> transacciones = b.darTransacciones();
-			for (Transaccion t: transacciones) {
+			for (int j=transacciones.size()-1; j>=0; j--) {
+				Transaccion t = transacciones.get(j);
 				if (t.equals(temporal)) {
 					encontrada = true;
 					break;

@@ -1,13 +1,9 @@
 package senscript;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.bouncycastle.util.encoders.Hex;
 
 import crypto.ECC;
 import crypto.ECCKeys_Manager;
 import device.SensorNode;
-import simulation.WisenSimulation;
 
 public class Command_DECIPHER extends Command {
 

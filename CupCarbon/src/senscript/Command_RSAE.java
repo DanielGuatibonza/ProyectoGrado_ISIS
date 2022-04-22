@@ -1,18 +1,10 @@
 package senscript;
 import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-
-import crypto.ECC;
 import crypto.PK;
 import device.SensorNode;
-import simulation.WisenSimulation;
 
 public class Command_RSAE extends Command {
 
