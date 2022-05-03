@@ -17,9 +17,8 @@ public class Command_SAVE_DATA extends Command {
 	
 	@Override
 	public synchronized double execute() {
-		
-		String[] transacciones = arg1.split("&");
-		
+		String mensaje = sensor.getScript().getVariableValue(arg1);
+		String[] transacciones = mensaje.split("&");
 		for (String t: transacciones) {
 			ManejadorBlockchain.blockchains.get(sensor.getId()).recibirTransaccion(t);
 		}

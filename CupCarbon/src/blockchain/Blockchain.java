@@ -15,7 +15,7 @@ public class Blockchain extends Thread {
 	public Blockchain (SensorNode pEstacion) {
 		estacion = pEstacion;
 		bloques = new ArrayList<Bloque>();
-		bloques.add(new Bloque("", estacion.getId()));
+		bloques.add(new Bloque(null, estacion.getId()));
 		transaccionesTemporales = new ArrayList<Transaccion>();
 		
 		estacion.getScript().addVariable("bloqueNuevo", "");

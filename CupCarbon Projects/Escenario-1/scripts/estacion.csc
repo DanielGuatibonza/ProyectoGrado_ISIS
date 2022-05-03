@@ -28,6 +28,7 @@ loop
 	end
 	if(tipo=="mensaje")
 		decipher params idN mensajeDescifrado
+		cprint mensajeDescifrado
 		savedata mensajeDescifrado
 		if(reenviarTransaccion=="true")
 			if(idRepetidor1!=-1)

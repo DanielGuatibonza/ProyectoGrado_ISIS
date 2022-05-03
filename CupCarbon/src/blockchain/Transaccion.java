@@ -38,7 +38,9 @@ public class Transaccion {
 	}
 	
 	public Transaccion (String parametros) {
-		String[] partes = parametros.split(" | ");
+		System.out.println("PARAMETROS: " + parametros);
+		String[] partes = parametros.split("!");
+		System.out.println("TRANSACCION - parametros " + partes.length + " - " + partes[0]);
 		idSensor = Integer.parseInt(partes[0].split(": ")[1]);
 		
 		try {
@@ -65,9 +67,9 @@ public class Transaccion {
 	
 	@Override
 	public String toString () {
-		return "ID Sensor: " + idSensor + " | Timestamp: " + Bloque.FORMATO.format(timestamp) + " | Tiempo transcurrido: " + tiempoTranscurrido + " segundos | Latitud: " + 
-				latitud + " | Longitud: " + longitud + " | pH: " + pH + " | Temperatura: " + temperatura + " °C | Terneza: " + terneza + " | Merma por cocción: " + mermaPorCoccion + 
-				" | Color: (L* = " + colorL + ", a* = " + colorA + ", b* = " + colorB + ")";
+		return "ID Sensor: " + idSensor + "!Timestamp: " + Bloque.FORMATO.format(timestamp) + "!Tiempo transcurrido: " + tiempoTranscurrido + "!Latitud: " + 
+				latitud + "!Longitud: " + longitud + "!pH: " + pH + "!Temperatura: " + temperatura + "!Terneza: " + terneza + "!Merma por cocción: " + mermaPorCoccion + 
+				"!Color: (L* = " + colorL + ", a* = " + colorA + ", b* = " + colorB + ")";
 	}
 
 	@Override

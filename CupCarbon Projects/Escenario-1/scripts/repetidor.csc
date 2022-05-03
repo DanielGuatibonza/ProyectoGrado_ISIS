@@ -20,48 +20,64 @@ loop
 	if(tipo=="mensajeARepetidor")
     		decipher params idN mensajeDescifrado
 		if(idEstacion1==idN)
-			cipher mensajeDescifrado idEstacion2 mensajeCifrado
-			data mensaje "mensaje" id mensajeCifrado
-			send mensaje idEstacion2
+			if(idEstacion2!=-1)
+				cipher mensajeDescifrado idEstacion2 mensajeCifrado
+				data mensaje "mensaje" id mensajeCifrado
+				send mensaje idEstacion2
+			end
 		else
-			cipher mensajeDescifrado idEstacion1 mensajeCifrado
-			data mensaje "mensaje" id mensajeCifrado
-			send mensaje idEstacion1
+			if(idEstacion1!=-1)
+				cipher mensajeDescifrado idEstacion1 mensajeCifrado
+				data mensaje "mensaje" id mensajeCifrado
+				send mensaje idEstacion1
+			end
 		end
 	end
 	if(tipo=="bloqueARepetidor")
 		decipher params idN contenidoDescifrado
 		if(idEstacion1==idN)
-			cipher contenidoDescifrado idEstacion2 mensajeCifrado
-			data mensaje "bloqueAValidar" id mensajeCifrado
-			send mensaje idEstacion2
+			if(idEstacion2!=-1)
+				cipher contenidoDescifrado idEstacion2 mensajeCifrado
+				data mensaje "bloqueAValidar" id mensajeCifrado
+				send mensaje idEstacion2
+			end
 		else
-			cipher contenidoDescifrado idEstacion1 mensajeCifrado
-			data mensaje "bloqueAValidar" id mensajeCifrado
-			send mensaje idEstacion1
+			if(idEstacion1!=-1)
+				cipher contenidoDescifrado idEstacion1 mensajeCifrado
+				data mensaje "bloqueAValidar" id mensajeCifrado
+				send mensaje idEstacion1
+			end
 		end
 	end
 	if(tipo=="bloqueValidoARepetidor")
 		decipher params idN contenidoDescifrado
 		if(idEstacion1==idN)
-			cipher contenidoDescifrado idEstacion2 mensajeCifrado
-			data mensaje "bloqueValido" id mensajeCifrado
-			send mensaje idEstacion2
+			if(idEstacion2!=-1)
+				cipher contenidoDescifrado idEstacion2 mensajeCifrado
+				data mensaje "bloqueValido" id mensajeCifrado
+				send mensaje idEstacion2
+			end
 		else
-			cipher contenidoDescifrado idEstacion1 mensajeCifrado
-			data mensaje "bloqueValido" id mensajeCifrado
-			send mensaje idEstacion1
+			if(idEstacion1!=-1)
+				cipher contenidoDescifrado idEstacion1 mensajeCifrado
+				data mensaje "bloqueValido" id mensajeCifrado
+				send mensaje idEstacion1
+			end
 		end
 	end
 	if(tipo=="timestampARepetidor")
 		decipher params idN contenidoDescifrado
 		if(idEstacion1==idN)
-			cipher contenidoDescifrado idEstacion2 mensajeCifrado
-			data mensaje "timestamp" id mensajeCifrado
-			send mensaje idEstacion2
+			if(idEstacion2!=-1)
+				cipher contenidoDescifrado idEstacion2 mensajeCifrado
+				data mensaje "timestamp" id mensajeCifrado
+				send mensaje idEstacion2
+			end
 		else
-			cipher contenidoDescifrado idEstacion1 mensajeCifrado
-			data mensaje "timestamp" id mensajeCifrado
-			send mensaje idEstacion1
+			if(idEstacion1!=-1)
+				cipher contenidoDescifrado idEstacion1 mensajeCifrado
+				data mensaje "timestamp" id mensajeCifrado
+				send mensaje idEstacion1
+			end
 		end
 	end

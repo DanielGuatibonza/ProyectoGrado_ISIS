@@ -43,9 +43,9 @@ public class Bloque {
 		try (FileReader reader = new FileReader("data/tareas.json"))
 		{
 			idEstacion = pIdEstacion;
-			nonce = -(new Random()).nextInt(1000);
+			nonce = (new Random()).nextInt(1000);
 			transacciones = new ArrayList<Transaccion> ();
-			transaccionesStr = "";
+			transaccionesStr = null;
 			estado = Estado.ABIERTO;
 			digest = MessageDigest.getInstance("SHA-256");
 			hashAnterior = hash;
@@ -150,7 +150,11 @@ public class Bloque {
 
 	public void agregarTransaccion (Transaccion nueva) {
 		transacciones.add(nueva);
-		transaccionesStr += nueva.toString() + "&";
+		if(transaccionesStr == null) {
+			transaccionesStr = nueva.toString() + "&";
+		} else {
+			transaccionesStr += nueva.toString() + "&";
+		}
 		byte[] encodedhash = digest.digest(transaccionesStr.getBytes(StandardCharsets.UTF_8));
 		merkleRoot = new String(Hex.encode(encodedhash));
 	}
