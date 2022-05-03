@@ -1,23 +1,31 @@
 atget id id
-keysecc priv pub
 
-set contador 1
+keysecc priv pub
+waittime
+
+data mensajeDetectar "detectarEstacion" id pub
+send mensajeDetectar *
+
+set contador 0
+updatetime 0
 
 loop
-	delay 10000
-	read m
-	rdata m tipo idN params
-
-	data mensajeDetectar "detectarEstacion" id pub
-	send mensajeDetectar *
+	delay 1000
+	set contador contador+1
 
 	read mensajeEntrante
 	rdata mensajeEntrante tipo idN params
 
 	if(tipo=="estacionDetectada")
 		secretecc idN params priv
-		cipher contador idN mensajeCifrado
+		simulatepoint datos
+		cipher datos idN mensajeCifrado
 		data mensaje "mensaje" id mensajeCifrado
 		send mensaje idN
-		set contador contador+1
 	end
+	if(contador==3600)
+		set contador 0
+		updatetime 3600
+		data mensajeDetectar "detectarEstacion" id pub
+		send mensajeDetectar *
+	end	

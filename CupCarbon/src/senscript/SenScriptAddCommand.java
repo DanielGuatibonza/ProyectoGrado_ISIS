@@ -469,7 +469,7 @@ public final class SenScriptAddCommand {
 			command = new Command_SEND_CIPHER(sensorNode, inst[1], inst[2]);
 		}
 		if(inst[0].toLowerCase().equals("recvdecipher")) {
-			command = new Command_SEND_CIPHER(sensorNode, inst[1], inst[2]);
+			command = new Command_RECV_DECIPHER(sensorNode, inst[1], inst[2]);
 		}
 		if(inst[0].toLowerCase().equals("initblockchain")) {
 			command = new Command_INIT_BLOCKCHAIN(sensorNode);

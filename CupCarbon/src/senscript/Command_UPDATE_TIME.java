@@ -18,7 +18,10 @@ public class Command_UPDATE_TIME extends Command {
 	@Override
 	public synchronized double execute() {
 		
-		int tiempoAnterior = ManejadorSensores.tiemposSensores.get(sensor.getId());
+		Integer tiempoAnterior = ManejadorSensores.tiemposSensores.get(sensor.getId());
+		if(tiempoAnterior == null) {
+			tiempoAnterior = 0;
+		}
 		ManejadorSensores.tiemposSensores.put(sensor.getId(), tiempoAnterior + Integer.parseInt(arg1));
 		return 0;
 	}

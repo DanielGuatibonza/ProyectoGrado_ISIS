@@ -28,7 +28,7 @@ public class Command_SIMULATE_POINT extends Command {
 		double[] posicion = sensor.getPosition();
 		String transacciones = ""; 
 		
-		for (int i = 0; i < 1000; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			// Latitud y longitud
 			if (posicion[0] >= 4.645 && posicion[0] <= 4.646 && posicion[1] >= -74.0735 && posicion[1] <= -74.0725) {

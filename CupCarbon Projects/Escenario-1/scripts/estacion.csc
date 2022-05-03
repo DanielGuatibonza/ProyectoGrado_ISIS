@@ -3,16 +3,16 @@ set idRepetidor1 -1
 set idRepetidor2 -1
 keysecc priv pub
 
+initblockchain
+
 data mensaje "registroEstacion" id pub
 send mensaje *
 
-initblockchain
-
 loop
-	delay 1000
+	wait
 	read m
 	rdata m tipo idN params
-
+	cprint m
 	if(tipo=="registroRepetidor")
 		secretecc idN params priv
     		if(idRepetidor1==-1)

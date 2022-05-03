@@ -39,7 +39,7 @@ public class Command_VALIDATE extends Command {
 	
 	@Override
 	public synchronized double execute() {
-		
+		System.out.println(arg1);
 		String[] partes = arg1.split(" % ");
 		String hashAnterior = partes[partes.length - 1].split(": ")[1];
 		Blockchain blockchain = ManejadorBlockchain.blockchains.get(sensor.getId());
