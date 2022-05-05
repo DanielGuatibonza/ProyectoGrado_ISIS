@@ -38,9 +38,7 @@ public class Transaccion {
 	}
 	
 	public Transaccion (String parametros) {
-		System.out.println("PARAMETROS: " + parametros);
 		String[] partes = parametros.split("!");
-		System.out.println("TRANSACCION - parametros " + partes.length + " - " + partes[0]);
 		idSensor = Integer.parseInt(partes[0].split(": ")[1]);
 		
 		try {

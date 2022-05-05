@@ -19,7 +19,6 @@ loop
 	if(tipo=="estacionDetectada")
 		secretecc idN params priv
 		simulatepoint datos
-		cprint datos
 		cipher datos idN mensajeCifrado
 		data mensaje "mensaje" id mensajeCifrado
 		send mensaje idN

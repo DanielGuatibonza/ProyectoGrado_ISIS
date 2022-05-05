@@ -74,13 +74,13 @@ public class Blockchain extends Thread {
 			if (encontrada) {
 				break;
 			}
-		} 
-
+		}
 		if (encontrada) {
 			estacion.getScript().addVariable("reenviarTransaccion", "false");
 		}
 		else {
 			Bloque ultimoBloque = bloques.get(bloques.size()-1);
+			System.out.println("ESTADO ULTIMO BLOQUE: " + ultimoBloque.darEstado());
 			if (ultimoBloque.darEstado().equals(Estado.ABIERTO)) {
 				ultimoBloque.agregarTransaccion(temporal);
 			}

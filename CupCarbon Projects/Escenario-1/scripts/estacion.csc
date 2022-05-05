@@ -12,7 +12,6 @@ loop
 	wait
 	read m
 	rdata m tipo idN params
-	cprint m
 	if(tipo=="registroRepetidor")
 		secretecc idN params priv
     		if(idRepetidor1==-1)
@@ -28,18 +27,21 @@ loop
 	end
 	if(tipo=="mensaje")
 		decipher params idN mensajeDescifrado
-		cprint mensajeDescifrado
 		savedata mensajeDescifrado
 		if(reenviarTransaccion=="true")
 			if(idRepetidor1!=-1)
-    				cipher mensajeDescifrado idRepetidor1 mensajeCifrado
-				data mensaje "mensajeARepetidor" id mensajeCifrado
-				send mensaje idRepetidor1 
+				if(idRepetidor1!=idN)
+    					cipher mensajeDescifrado idRepetidor1 mensajeCifrado
+					data mensaje "mensajeARepetidor" id mensajeCifrado
+					send mensaje idRepetidor1
+				end
 			end
 			if(idRepetidor2!=-1)
-    				cipher mensajeDescifrado idRepetidor2 mensajeCifrado
-				data mensaje "mensajeARepetidor" id mensajeCifrado
-				send mensaje idRepetidor2 
+				if(idRepetidor2!=idN)
+    					cipher mensajeDescifrado idRepetidor2 mensajeCifrado
+					data mensaje "mensajeARepetidor" id mensajeCifrado
+					send mensaje idRepetidor2
+				end
 			end
 		end
 	end
@@ -60,14 +62,18 @@ loop
 			end
 		end
 		if(idRepetidor1==idN)
-    			cipher contenido idRepetidor2 contenidoCifrado
-			data mensaje "bloqueARepetidor" id contenidoCifrado
-			send mensaje idRepetidor2
+			if(idRepetidor2!=-1)
+    				cipher contenido idRepetidor2 contenidoCifrado
+				data mensaje "bloqueARepetidor" id contenidoCifrado
+				send mensaje idRepetidor2
+			end
 		end
 		if(idRepetidor2==idN)
-			cipher contenido idRepetidor1 contenidoCifrado
-			data mensaje "bloqueARepetidor" id contenidoCifrado
-			send mensaje idRepetidor1
+			if(idRepetidor1!=-1)
+				cipher contenido idRepetidor1 contenidoCifrado
+				data mensaje "bloqueARepetidor" id contenidoCifrado
+				send mensaje idRepetidor1
+			end
 		end
 	end
 	if(tipo=="bloqueValido")

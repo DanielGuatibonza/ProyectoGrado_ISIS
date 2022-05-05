@@ -11,7 +11,7 @@ public class ProofOfWork implements ProofOfX {
 	private Bloque bloque;
 	private boolean ejecutar;
 	private MessageDigest digest;
-	
+
 	public ProofOfWork (Bloque pBloque) {
 		bloque = pBloque;
 		ejecutar = true;
@@ -21,7 +21,7 @@ public class ProofOfWork implements ProofOfX {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public String ejecutar() {
 		boolean nonceEncontrado = false;
@@ -31,15 +31,23 @@ public class ProofOfWork implements ProofOfX {
 			ceros += "0";
 		}
 		while (!nonceEncontrado && ejecutar) {
-			byte[] encodedhash = digest.digest(bloque.toString().getBytes(StandardCharsets.UTF_8));
-			hash = new String(Hex.encode(encodedhash));
-			if (hash.startsWith(ceros)) {
-				System.out.println("Hash " + hash);
-				nonceEncontrado = true;
+			if(bloque.darTransacciones().size() > 0) {
+				byte[] encodedhash = digest.digest(bloque.toString().getBytes(StandardCharsets.UTF_8));
+				hash = new String(Hex.encode(encodedhash));
+				if (hash.startsWith(ceros)) {
+					System.out.println("Hash " + hash);
+					nonceEncontrado = true;
+				}
+				else {
+					bloque.incrementarNonce();
+				}
 			}
 			else {
-				bloque.incrementarNonce();
-				return hash;
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		if (!ejecutar) {
@@ -52,7 +60,7 @@ public class ProofOfWork implements ProofOfX {
 	public void detenerEjecucion() {
 		ejecutar = false;
 	}
-	
+
 	@Override
 	public String toString () {
 		return "Proof of Work, dificultad: " + DIFICULTAD;
