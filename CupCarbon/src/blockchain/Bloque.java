@@ -10,6 +10,7 @@ import java.util.Random;
 
 import org.bouncycastle.util.encoders.Hex;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class Bloque {
@@ -72,23 +73,27 @@ public class Bloque {
 			estado = Estado.CERRADO;
 			digest = MessageDigest.getInstance("SHA-256");
 			String[] partes = cadena.split(" % ");
-			transaccionesStr = partes[0].split(": ")[1];
+			transaccionesStr = partes[0].split("= ")[1];
+			System.out.println(transaccionesStr);
 			String[] pTransacciones = transaccionesStr.split("&");
 			for (int i = 0; i < pTransacciones.length; i++) {
-				transacciones.add(new Transaccion(pTransacciones[i]));
+				if(!pTransacciones[i].equals("")) {
+					System.out.println("PARAMETROS: " + pTransacciones[i]);
+					transacciones.add(new Transaccion(pTransacciones[i]));	
+				}
 			}
-			merkleRoot = partes[1].split(": ")[1];
-			nonce = Integer.parseInt(partes[2].split(": ")[1]);
+			merkleRoot = partes[1].split("= ")[1];
+			nonce = Integer.parseInt(partes[2].split("= ")[1]);
 			
-			if (partes[3].split(": ")[1].startsWith("Proof of Work")) {
+			if (partes[3].split("= ")[1].startsWith("Proof of Work")) {
 				proof = new ProofOfWork(this);
 			}
 			else {
 				proof = new ProofOfLearning();
 			}
 			
-			idEstacion = Integer.parseInt(partes[4].split(": ")[1]);
-			hashAnterior = partes[partes.length - 1].split(": ")[1];
+			idEstacion = Integer.parseInt(partes[4].split("= ")[1]);
+			hashAnterior = partes[partes.length - 1].split("= ")[1];
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -176,9 +181,29 @@ public class Bloque {
 	public void detenerEjecucion () {
 		proof.detenerEjecucion();
 	}
+	
+	public JSONObject darJSONObject() {
+		JSONObject bloqueJson = new JSONObject();
+		bloqueJson.put("idEstacion", idEstacion);
+		bloqueJson.put("hash", hash);
+		bloqueJson.put("hashAnterior", hashAnterior);
+		bloqueJson.put("timestamp", timestamp);
+		bloqueJson.put("merkleRoot", merkleRoot);
+		bloqueJson.put("nonce", nonce);
+		
+		JSONArray arrayTransacciones = new JSONArray();
+		JSONObject transaccionJson = null;
+		for(Transaccion t: transacciones) {
+			transaccionJson = t.darJSONObject();
+			arrayTransacciones.add(transaccionJson);
+		}
+		bloqueJson.put("transacciones", arrayTransacciones);
+		
+		return bloqueJson;
+	}
 
 	@Override
 	public String toString () {
-		return "Transacciones: " + transaccionesStr + " % Merkle root: " + merkleRoot + " % Nonce: " + nonce + " % Proof: " + proof.toString() + " % ID Estación: " + idEstacion + " % Hash anterior: " + hashAnterior;  
+		return "Transacciones= " + transaccionesStr + " % Merkle root= " + merkleRoot + " % Nonce= " + nonce + " % Proof= " + proof.toString() + " % ID Estacion= " + idEstacion + " % Hash anterior= " + hashAnterior;  
 	}
 }

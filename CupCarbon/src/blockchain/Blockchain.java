@@ -1,7 +1,11 @@
 package blockchain;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import blockchain.Bloque.Estado;
 import device.SensorNode;
@@ -11,6 +15,7 @@ public class Blockchain extends Thread {
 	private SensorNode estacion;
 	private ArrayList<Bloque> bloques;
 	private ArrayList<Transaccion> transaccionesTemporales;
+	private JSONArray jsonArray;
 
 	public Blockchain (SensorNode pEstacion) {
 		estacion = pEstacion;
@@ -21,6 +26,17 @@ public class Blockchain extends Thread {
 		estacion.getScript().addVariable("bloqueNuevo", "");
 		estacion.getScript().addVariable("reenviarTransaccion", "false");
 		estacion.getScript().addVariable("timestampUltimo", "");
+		
+		if(estacion.getId() == 1) {
+			try (FileWriter file = new FileWriter("data/blockchain.json")) {
+				jsonArray = new JSONArray();
+	            file.write(jsonArray.toJSONString()); 
+	            file.flush();
+	 
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+		}
 	}
 
 	@Override
@@ -46,6 +62,10 @@ public class Blockchain extends Thread {
 					}
 					transaccionesTemporales = new ArrayList<Transaccion>();
 					bloques.add(nuevoBloque);
+					
+					if(estacion.getId() == 1) {
+						agregarBloqueAJSON(bloqueActual);
+					}
 				}
 				else {
 					try {
@@ -80,7 +100,6 @@ public class Blockchain extends Thread {
 		}
 		else {
 			Bloque ultimoBloque = bloques.get(bloques.size()-1);
-			System.out.println("ESTADO ULTIMO BLOQUE: " + ultimoBloque.darEstado());
 			if (ultimoBloque.darEstado().equals(Estado.ABIERTO)) {
 				ultimoBloque.agregarTransaccion(temporal);
 			}
@@ -112,5 +131,25 @@ public class Blockchain extends Thread {
 		nuevoBloque.establecerHash(hashUltimo);
 		bloques.add(nuevoBloque);
 		bloques.add(new Bloque (hashUltimo, estacion.getId()));
+		if(estacion.getId() == 1) {
+			agregarBloqueAJSON(nuevoBloque);
+		}
+	}
+	
+	public void establecerTimestamp(int idEstacion, ) {
+		
+	}
+	
+	public void agregarBloqueAJSON(Bloque bloque) {
+		try (FileWriter file = new FileWriter("data/blockchain.json")) {
+			JSONObject bloqueJson = bloque.darJSONObject();
+			jsonArray.add(bloqueJson);
+            file.write(jsonArray.toJSONString()); 
+            file.flush();
+ 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		
 	}
 }

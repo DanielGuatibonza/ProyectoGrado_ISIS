@@ -1,6 +1,7 @@
 atget id id
 set idRepetidor1 -1
 set idRepetidor2 -1
+set reenviarTransaccion "false"
 keysecc priv pub
 
 initblockchain

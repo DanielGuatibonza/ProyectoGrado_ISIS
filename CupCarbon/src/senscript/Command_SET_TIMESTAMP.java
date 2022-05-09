@@ -2,6 +2,7 @@ package senscript;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import blockchain.Blockchain;
 import blockchain.Bloque;
@@ -31,15 +32,17 @@ public class Command_SET_TIMESTAMP extends Command {
 		
 		Blockchain blockchain = ManejadorBlockchain.blockchains.get(sensor.getId());
 		ArrayList<Bloque> bloques = blockchain.darBloques();
-		int idEstacion = Integer.parseInt(arg2);
+		int idEstacion = Integer.parseInt(sensor.getScript().getVariableValue(arg2));
+		Date timestamp = null;
+		try {
+			Date timestamp = Bloque.FORMATO.parse(sensor.getScript().getVariableValue(arg1));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		for (int i = bloques.size() - 1; i >= 0; i-- ) {
 			Bloque actual = bloques.get(i);
 			if (actual.darEstado().equals(Bloque.Estado.CERRADO) && actual.darIDEstacion() == idEstacion) {
-				try {
-					actual.establecerTimestamp(Bloque.FORMATO.parse(arg1));
-				} catch (ParseException e) {
-					e.printStackTrace();
-				}
+				actual.establecerTimestamp(timestamp);
 				break;
 			}
 		}

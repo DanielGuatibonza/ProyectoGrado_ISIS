@@ -1,13 +1,13 @@
 List of parameters
 ------------------------------------------
 device_type:1
-device_id:21
-device_longitude:-73.16863268917847
-device_latitude:7.0932788774507065
+device_id:22
+device_longitude:-73.17064046859741
+device_latitude:7.092641521479142
 device_elevation:0.0
 device_radius:0.0
 device_hide:0
 device_draw_battery:false
 device_sensor_unit_radius:20.0
-device_gps_file_name:transporte1.gps
-device_script_file_name:sensor1.csc
+device_gps_file_name:transporte2.gps
+device_script_file_name:sensor2.csc

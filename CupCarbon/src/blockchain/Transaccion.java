@@ -3,6 +3,8 @@ package blockchain;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.json.simple.JSONObject;
+
 public class Transaccion {
 	
 	private int idSensor;
@@ -58,16 +60,33 @@ public class Transaccion {
 		String colores = partes[9].split(": ")[1];
 		colores = colores.substring(1, colores.length() - 1);
 		String[] divisiones = colores.split(", ");
-		colorL = Double.parseDouble(divisiones[0].split(" = ")[1]);
-		colorA = Double.parseDouble(divisiones[1].split(" = ")[1]);
-		colorB = Double.parseDouble(divisiones[2].split(" = ")[1]);
+		colorL = Double.parseDouble(divisiones[0].split(" _ ")[1]);
+		colorA = Double.parseDouble(divisiones[1].split(" _ ")[1]);
+		colorB = Double.parseDouble(divisiones[2].split(" _ ")[1]);
+	}
+	
+	public JSONObject darJSONObject() {
+		JSONObject transaccionJson = new JSONObject();
+		transaccionJson.put("idSensor", idSensor);
+		transaccionJson.put("timestamp", timestamp);
+		transaccionJson.put("tiempoTranscurrido", tiempoTranscurrido);
+		transaccionJson.put("latitud", latitud);
+		transaccionJson.put("longitud", longitud);
+		transaccionJson.put("pH", pH);
+		transaccionJson.put("temperatura", temperatura);
+		transaccionJson.put("terneza", terneza);
+		transaccionJson.put("mermaPorCoccion", mermaPorCoccion);
+		transaccionJson.put("colorL", colorL);
+		transaccionJson.put("colorA", colorA);
+		transaccionJson.put("colorB", colorB);
+		return transaccionJson;
 	}
 	
 	@Override
 	public String toString () {
 		return "ID Sensor: " + idSensor + "!Timestamp: " + Bloque.FORMATO.format(timestamp) + "!Tiempo transcurrido: " + tiempoTranscurrido + "!Latitud: " + 
-				latitud + "!Longitud: " + longitud + "!pH: " + pH + "!Temperatura: " + temperatura + "!Terneza: " + terneza + "!Merma por cocción: " + mermaPorCoccion + 
-				"!Color: (L* = " + colorL + ", a* = " + colorA + ", b* = " + colorB + ")";
+				latitud + "!Longitud: " + longitud + "!pH: " + pH + "!Temperatura: " + temperatura + "!Terneza: " + terneza + "!Merma por coccion: " + mermaPorCoccion + 
+				"!Color: (L* _ " + colorL + ", a* _ " + colorA + ", b* _ " + colorB + ")";
 	}
 
 	@Override
@@ -79,12 +98,9 @@ public class Transaccion {
 		if (getClass() != obj.getClass())
 			return false;
 		Transaccion other = (Transaccion) obj;
-		if (idSensor != other.idSensor)
-			return false;
-		if (timestamp == null) {
-			if (other.timestamp != null)
-				return false;
-		} else if (!timestamp.equals(other.timestamp))
+		if (idSensor != other.idSensor || !timestamp.equals(other.timestamp) || tiempoTranscurrido != other.tiempoTranscurrido ||
+				latitud != other.latitud || longitud != other.longitud || pH != other.pH || temperatura != other.temperatura || terneza != other.terneza 
+				|| mermaPorCoccion != other.mermaPorCoccion || colorL != other.colorL || colorA != other.colorA || colorB != other.colorB)
 			return false;
 		return true;
 	}

@@ -42,26 +42,32 @@ public class Command_VALIDATE extends Command {
 		String bloque = sensor.getScript().getVariableValue(arg1);
 		System.out.println("ARG " + arg1 + " - " + bloque);
 		String[] partes = bloque.split(" % ");
-		String hashAnterior = partes[partes.length - 1].split(": ")[1];
+		String hashAnterior = partes[partes.length - 1].split("= ")[1];
 		Blockchain blockchain = ManejadorBlockchain.blockchains.get(sensor.getId());
 		ArrayList<Bloque> bloques = blockchain.darBloques();
 		MessageDigest digest;
 		
 		try {
 			digest = MessageDigest.getInstance("SHA-256");
-			if (hashAnterior.equals(bloques.get(bloques.size() - 1).darHashAnterior())) {
-				byte[] encodedhash = digest.digest(arg1.getBytes(StandardCharsets.UTF_8));
+			String ultimoBloqueHashAnterior = bloques.get(bloques.size() - 1).darHashAnterior();
+			if(ultimoBloqueHashAnterior == null) {
+				ultimoBloqueHashAnterior = "null";
+			}
+			if (hashAnterior.equals(ultimoBloqueHashAnterior)) {
+				System.out.println("ENTRÉ");
+				byte[] encodedhash = digest.digest(bloque.getBytes(StandardCharsets.UTF_8));
 				String hashActual = new String(Hex.encode(encodedhash)); 
+				System.out.println("MENSAJITO " + hashActual);
 				
 				String ceros = ""; 
 				for (int i = 0; i < ProofOfWork.DIFICULTAD; i++ ) {
 					ceros += "0";
 				}
-				// TODO Detener ejecución del bloque y agregar el bloque recibido
+				// Detener ejecución del bloque y agregar el bloque recibido
 				if (hashActual.startsWith(ceros)) {
-					sensor.getScript().addVariable(arg3, arg2);
+					sensor.getScript().addVariable(arg3, sensor.getScript().getVariableValue(arg2));
 					blockchain.detenerProof();
-					blockchain.reemplazarBloque(arg1, hashAnterior, hashActual);	
+					blockchain.reemplazarBloque(bloque, hashAnterior, hashActual);	
 				}
 				else {
 					sensor.getScript().addVariable(arg3, "");
