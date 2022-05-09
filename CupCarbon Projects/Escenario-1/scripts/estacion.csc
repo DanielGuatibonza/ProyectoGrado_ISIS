@@ -59,7 +59,7 @@ loop
 			if(idRepetidor2!=-1)
     				cipher respuestaValidacion idRepetidor2 respuestaCifrada
 				data mensajeValidacion "bloqueValidoARepetidor" id respuestaCifrada
-    				send mensajeValidacion idRepetidor12
+    				send mensajeValidacion idRepetidor2
 			end
 		end
 		if(idRepetidor1==idN)
@@ -80,7 +80,19 @@ loop
 	if(tipo=="bloqueValido")
 		decipher params idN idEstacion
 		if(id==idEstacion)
-			savevalidation			
+			cprint id
+			savevalidation	
+		else
+			if(idRepetidor1!=-1)
+				cipher respuestaValidacion idRepetidor1 respuestaCifrada
+				data mensajeValidacion "bloqueValidoARepetidor" id respuestaCifrada
+    				send mensajeValidacion idRepetidor1 
+			end
+			if(idRepetidor2!=-1)
+    				cipher respuestaValidacion idRepetidor2 respuestaCifrada
+				data mensajeValidacion "bloqueValidoARepetidor" id respuestaCifrada
+    				send mensajeValidacion idRepetidor2
+			end			
 		end
 	end
 	if(tipo=="timestamp")

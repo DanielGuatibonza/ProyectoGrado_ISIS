@@ -31,21 +31,15 @@ public class Command_SET_TIMESTAMP extends Command {
 	public synchronized double execute() {
 		
 		Blockchain blockchain = ManejadorBlockchain.blockchains.get(sensor.getId());
-		ArrayList<Bloque> bloques = blockchain.darBloques();
 		int idEstacion = Integer.parseInt(sensor.getScript().getVariableValue(arg2));
 		Date timestamp = null;
 		try {
-			Date timestamp = Bloque.FORMATO.parse(sensor.getScript().getVariableValue(arg1));
+			timestamp = Bloque.FORMATO.parse(sensor.getScript().getVariableValue(arg1));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		for (int i = bloques.size() - 1; i >= 0; i-- ) {
-			Bloque actual = bloques.get(i);
-			if (actual.darEstado().equals(Bloque.Estado.CERRADO) && actual.darIDEstacion() == idEstacion) {
-				actual.establecerTimestamp(timestamp);
-				break;
-			}
-		}
+		System.out.println("Set timestamp");
+		blockchain.establecerTimestamp(idEstacion, timestamp);
 		return 0;
 	}
 

@@ -11,6 +11,7 @@ public class Command_SAVE_VALIDATION extends Command {
 	
 	@Override
 	public double execute() {
+		System.out.println("Entró command save validation");
 		ManejadorBlockchain.blockchains.get(sensor.getId()).recibirConfirmacion();
 		return 0;
 	}

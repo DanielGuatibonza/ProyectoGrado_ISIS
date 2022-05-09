@@ -50,7 +50,9 @@ public class Blockchain extends Thread {
 				} 				
 			}
 			else if (bloqueActual.darEstado().equals(Estado.EN_ESPERA)) {
+				//System.out.println("RUN " + estacion.getId() + " - Confirmaciones: " + bloqueActual.darConfirmaciones());
 				if (bloqueActual.darConfirmaciones() > 4) {
+					System.out.println("RUN confirmaciones");
 					bloqueActual.cerrarBloque();
 					bloqueActual.establecerTimestamp(new Date());
 					estacion.getScript().addVariable("timestampUltimo", bloqueActual.darTimestamp());
@@ -115,6 +117,7 @@ public class Blockchain extends Thread {
 	}
 
 	public void recibirConfirmacion () {
+		System.out.println(estacion.getId() + " - Entró recibir confirmación. Bloque " + bloques.size() + " # transacciones: " + (bloques.get(0).darTransacciones().size()));
 		bloques.get(bloques.size() - 1).incrementarConfirmaciones();
 	}
 	
@@ -131,13 +134,21 @@ public class Blockchain extends Thread {
 		nuevoBloque.establecerHash(hashUltimo);
 		bloques.add(nuevoBloque);
 		bloques.add(new Bloque (hashUltimo, estacion.getId()));
-		if(estacion.getId() == 1) {
-			agregarBloqueAJSON(nuevoBloque);
-		}
+		System.out.println("Reemplazar bloque");
 	}
 	
-	public void establecerTimestamp(int idEstacion, ) {
-		
+	public void establecerTimestamp(int idEstacion, Date timestamp) {
+		Bloque actual = null;
+		for (int i = bloques.size() - 1; i >= 0; i-- ) {
+			actual = bloques.get(i);
+			if (actual.darEstado().equals(Bloque.Estado.CERRADO) && actual.darIDEstacion() == idEstacion) {
+				actual.establecerTimestamp(timestamp);
+				break;
+			}
+		}
+		if(estacion.getId() == 1) {
+			agregarBloqueAJSON(actual);
+		}	
 	}
 	
 	public void agregarBloqueAJSON(Bloque bloque) {

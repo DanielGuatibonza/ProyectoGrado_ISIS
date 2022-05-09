@@ -52,12 +52,14 @@ loop
 	if(tipo=="bloqueValidoARepetidor")
 		decipher params idN contenidoDescifrado
 		if(idEstacion1==idN)
+			cprint idEstacion1
 			if(idEstacion2!=-1)
 				cipher contenidoDescifrado idEstacion2 mensajeCifrado
 				data mensaje "bloqueValido" id mensajeCifrado
 				send mensaje idEstacion2
 			end
 		else
+			cprint idEstacion2
 			if(idEstacion1!=-1)
 				cipher contenidoDescifrado idEstacion1 mensajeCifrado
 				data mensaje "bloqueValido" id mensajeCifrado
