@@ -495,6 +495,9 @@ public final class SenScriptAddCommand {
 		if(inst[0].toLowerCase().equals("savevalidation")) {
 			command = new Command_SAVE_VALIDATION(sensorNode);
 		}
+		if(inst[0].toLowerCase().equals("stopproof")) {
+			command = new Command_STOP_PROOF(sensorNode);
+		}
 		//-------
 		// This part must be here (at the end). All new commands must be added before (above)
 		

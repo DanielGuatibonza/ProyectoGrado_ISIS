@@ -40,6 +40,9 @@ public class Command_CIPHER extends Command {
 		SecretKey llaveSimetricaServ = ECCKeys_Manager.darLlaveCompartida(sensor.getId(), Integer.parseInt(idN));
 		
 		byte[] textoCifrado = ECC.cifrar(llaveSimetricaServ, m);
+		if(textoCifrado == null) {
+			System.out.println(sensor.getId() + " ERROR: " + m + " " + arg1);
+		}
 		String v = ECC.bytesToHex(textoCifrado) ;
 		sensor.getScript().addVariable(arg3, v);
 		return 0;

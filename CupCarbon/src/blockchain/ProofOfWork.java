@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class ProofOfWork implements ProofOfX {
 
-	public static final int DIFICULTAD = 1;
+	public static final int DIFICULTAD = 5;
 	private Bloque bloque;
 	private boolean ejecutar;
 	private MessageDigest digest;
@@ -35,7 +35,6 @@ public class ProofOfWork implements ProofOfX {
 				byte[] encodedhash = digest.digest(bloque.toString().getBytes(StandardCharsets.UTF_8));
 				hash = new String(Hex.encode(encodedhash));
 				if (hash.startsWith(ceros)) {
-					System.out.println("Hash " + hash);
 					nonceEncontrado = true;
 				}
 				else {
@@ -63,7 +62,7 @@ public class ProofOfWork implements ProofOfX {
 
 	@Override
 	public String toString () {
-		return "Proof of Work, dificultad: " + DIFICULTAD;
+		return "Proof of Work, dificultad " + DIFICULTAD;
 	}
 
 }

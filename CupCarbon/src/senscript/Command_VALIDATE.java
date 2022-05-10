@@ -40,7 +40,7 @@ public class Command_VALIDATE extends Command {
 	@Override
 	public synchronized double execute() {
 		String bloque = sensor.getScript().getVariableValue(arg1);
-		System.out.println("ARG " + arg1 + " - " + bloque);
+		//System.out.println("ARG " + arg1 + " - " + bloque);
 		String[] partes = bloque.split(" % ");
 		String hashAnterior = partes[partes.length - 1].split("= ")[1];
 		Blockchain blockchain = ManejadorBlockchain.blockchains.get(sensor.getId());
@@ -57,7 +57,7 @@ public class Command_VALIDATE extends Command {
 				System.out.println("ENTRÉ");
 				byte[] encodedhash = digest.digest(bloque.getBytes(StandardCharsets.UTF_8));
 				String hashActual = new String(Hex.encode(encodedhash)); 
-				System.out.println("MENSAJITO " + hashActual);
+				System.out.println(sensor.getId() + " VALIDO " + hashActual);
 				
 				String ceros = ""; 
 				for (int i = 0; i < ProofOfWork.DIFICULTAD; i++ ) {
@@ -66,19 +66,19 @@ public class Command_VALIDATE extends Command {
 				// Detener ejecución del bloque y agregar el bloque recibido
 				if (hashActual.startsWith(ceros)) {
 					sensor.getScript().addVariable(arg3, sensor.getScript().getVariableValue(arg2));
-					blockchain.detenerProof();
 					blockchain.reemplazarBloque(bloque, hashAnterior, hashActual);	
 				}
 				else {
-					sensor.getScript().addVariable(arg3, "");
+					sensor.getScript().addVariable(arg3, "invalido");
 				}
 			}
 			else {
-				sensor.getScript().addVariable(arg3, "");
+				sensor.getScript().addVariable(arg3, "invalido");
 			}
-		} catch (NoSuchAlgorithmException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println(sensor.getId() + "ARG3 " + sensor.getScript().getVariableValue(arg3));
 		return 0;
 	}
 

@@ -74,11 +74,11 @@ public class Bloque {
 			digest = MessageDigest.getInstance("SHA-256");
 			String[] partes = cadena.split(" % ");
 			transaccionesStr = partes[0].split("= ")[1];
-			System.out.println(transaccionesStr);
+			//System.out.println(transaccionesStr);
 			String[] pTransacciones = transaccionesStr.split("&");
 			for (int i = 0; i < pTransacciones.length; i++) {
 				if(!pTransacciones[i].equals("")) {
-					System.out.println("PARAMETROS: " + pTransacciones[i]);
+					//System.out.println("PARAMETROS: " + pTransacciones[i]);
 					transacciones.add(new Transaccion(pTransacciones[i]));	
 				}
 			}
@@ -134,6 +134,7 @@ public class Bloque {
 
 	public void incrementarConfirmaciones () {
 		confirmaciones++;
+		System.out.println("CONFIRMACIONES " + idEstacion + " " +confirmaciones);
 	}
 
 	public void establecerTimestamp (Date pTimestamp) {
@@ -167,6 +168,7 @@ public class Bloque {
 	// True si lo generó, False si lo recibió
 	public boolean ejecutar () {
 		String respuesta = proof.ejecutar();
+		System.out.println(idEstacion + " GENERO " + respuesta);
 		boolean ejecuto = true;
 		if (respuesta == null) {
 			ejecuto = false;

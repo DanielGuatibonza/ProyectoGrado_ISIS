@@ -72,7 +72,7 @@ public class Command_SEND_CIPHER extends Command{
 		Integer idDestino = Integer.parseInt(sensor.getScript().getVariableValue(arg2));
 
 		SecretKey llaveSimetricaServ = ECCKeys_Manager.darLlaveCompartida(idOrigen, idDestino);
-
+		
 		byte[] textoCifrado = ECC.cifrar(llaveSimetricaServ, mensaje);
 		String textoCifradoStr = ECC.bytesToHex(textoCifrado) ;
 
