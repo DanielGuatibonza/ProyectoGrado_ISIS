@@ -78,7 +78,7 @@ public class Command_VALIDATE extends Command {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println(sensor.getId() + "ARG3 " + sensor.getScript().getVariableValue(arg3));
+		System.out.println(sensor.getId() + " ARG3 " + sensor.getScript().getVariableValue(arg3));
 		return 0;
 	}
 

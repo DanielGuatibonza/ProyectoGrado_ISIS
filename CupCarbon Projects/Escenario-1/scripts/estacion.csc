@@ -115,14 +115,18 @@ loop
 		rdata contenido idEstacion timestamp
 		settimestamp timestamp idEstacion
 		if(idRepetidor1==idN)
-    			cipher contenido idRepetidor2 contenidoCifrado
-			data mensaje "timestampARepetidor" id contenidoCifrado
-			send mensaje idRepetidor2
+			if(idRepetidor2!=-1)
+    				cipher contenido idRepetidor2 contenidoCifrado
+				data mensaje "timestampARepetidor" id contenidoCifrado
+				send mensaje idRepetidor2
+			end
 		end
 		if(idRepetidor2==idN)
-			cipher contenido idRepetidor1 contenidoCifrado
-			data mensaje "timestampARepetidor" id contenidoCifrado
-			send mensaje idRepetidor1
+			if(idRepetidor1!=-1)
+				cipher contenido idRepetidor1 contenidoCifrado
+				data mensaje "timestampARepetidor" id contenidoCifrado
+				send mensaje idRepetidor1
+			end
 		end
 	end
 	if(bloqueNuevo!="")

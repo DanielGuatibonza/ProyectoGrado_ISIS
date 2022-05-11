@@ -189,7 +189,7 @@ public class Bloque {
 		bloqueJson.put("idEstacion", idEstacion);
 		bloqueJson.put("hash", hash);
 		bloqueJson.put("hashAnterior", hashAnterior);
-		bloqueJson.put("timestamp", timestamp);
+		bloqueJson.put("timestamp", timestamp.toString());
 		bloqueJson.put("merkleRoot", merkleRoot);
 		bloqueJson.put("nonce", nonce);
 		

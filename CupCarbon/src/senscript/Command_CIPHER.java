@@ -36,6 +36,8 @@ public class Command_CIPHER extends Command {
 		String m = sensor.getScript().getVariableValue(arg1);
 		String idN = sensor.getScript().getVariableValue(arg2);
 		
+		System.out.println("CIPHER params " + arg1 + " - " + arg2);
+		System.out.println("CIPHER " + sensor.getId() + " - " + idN);
 		// Llave simétrica
 		SecretKey llaveSimetricaServ = ECCKeys_Manager.darLlaveCompartida(sensor.getId(), Integer.parseInt(idN));
 		
