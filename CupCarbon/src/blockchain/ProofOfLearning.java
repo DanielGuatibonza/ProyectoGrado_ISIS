@@ -7,10 +7,4 @@ public class ProofOfLearning implements ProofOfX {
 		// TODO Auto-generated method stub
 		return "";
 	}
-
-	public void detenerEjecucion() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
