@@ -68,7 +68,7 @@ public class Transaccion {
 	public JSONObject darJSONObject() {
 		JSONObject transaccionJson = new JSONObject();
 		transaccionJson.put("idSensor", idSensor);
-		transaccionJson.put("timestamp", timestamp);
+		transaccionJson.put("timestamp", timestamp.toString());
 		transaccionJson.put("tiempoTranscurrido", tiempoTranscurrido);
 		transaccionJson.put("latitud", latitud);
 		transaccionJson.put("longitud", longitud);

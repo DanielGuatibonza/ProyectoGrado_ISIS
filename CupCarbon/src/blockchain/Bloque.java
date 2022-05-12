@@ -134,7 +134,6 @@ public class Bloque {
 
 	public void incrementarConfirmaciones () {
 		confirmaciones++;
-		System.out.println("CONFIRMACIONES " + idEstacion + " " +confirmaciones);
 	}
 
 	public void establecerTimestamp (Date pTimestamp) {
@@ -168,7 +167,6 @@ public class Bloque {
 	// True si lo generó, False si lo recibió
 	public boolean ejecutar () {
 		String respuesta = proof.ejecutar();
-		System.out.println(idEstacion + " GENERO " + respuesta);
 		boolean ejecuto = true;
 		if (respuesta == null) {
 			ejecuto = false;
@@ -180,9 +178,9 @@ public class Bloque {
 		return ejecuto;
 	}
 
-	public void detenerEjecucion () {
-		proof.detenerEjecucion();
-	}
+//	public void detenerEjecucion () {
+//		proof.detenerEjecucion();
+//	}
 	
 	public JSONObject darJSONObject() {
 		JSONObject bloqueJson = new JSONObject();

@@ -4,5 +4,5 @@ public interface ProofOfX {
 	
 	public String ejecutar ();
 	
-	public void detenerEjecucion ();
+	//public void detenerEjecucion ();
 }

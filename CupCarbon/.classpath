@@ -14,8 +14,8 @@
 	<classpathentry kind="lib" path="libs/openstreetmap/swingx-ws-2007_10_14.jar"/>
 	<classpathentry kind="lib" path="libs/openstreetmap/swingx.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JavaFX"/>
-	<classpathentry kind="lib" path="C:/Users/lStel/OneDrive/Escritorio/2022-I Octavo Semestre/Tesis/Repositorio/Java Libraries/json-simple-1.1.1/json-simple-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/lStel/OneDrive/Escritorio/2022-I Octavo Semestre/Tesis/Repositorio/Java Libraries/bcprov-ext-jdk15to18-170/bcprov-ext-jdk15to18-170.jar"/>
-	<classpathentry kind="lib" path="C:/Users/lStel/OneDrive/Escritorio/2022-I Octavo Semestre/Tesis/Repositorio/Java Libraries/jaxb-api-2.3.0/jaxb-api-2.3.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Desktop/2022-I Octavo semestre/Tesis/Repositorio propio/ProyectoGrado_ISIS/Java Libraries/json-simple-1.1.1/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Desktop/2022-I Octavo semestre/Tesis/Repositorio propio/ProyectoGrado_ISIS/Java Libraries/bcprov-ext-jdk15to18-170/bcprov-ext-jdk15to18-170.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Desktop/2022-I Octavo semestre/Tesis/Repositorio propio/ProyectoGrado_ISIS/Java Libraries/jaxb-api-2.3.0/jaxb-api-2.3.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -7,14 +7,14 @@ import java.security.NoSuchAlgorithmException;
 
 public class ProofOfWork implements ProofOfX {
 
-	public static final int DIFICULTAD = 5;
+	public static final int DIFICULTAD = 1;
 	private Bloque bloque;
-	private boolean ejecutar;
+	//private boolean ejecutar;
 	private MessageDigest digest;
 
 	public ProofOfWork (Bloque pBloque) {
 		bloque = pBloque;
-		ejecutar = true;
+		//ejecutar = true;
 		try {
 			digest = MessageDigest.getInstance("SHA-256");
 		} catch (NoSuchAlgorithmException e) {
@@ -30,7 +30,7 @@ public class ProofOfWork implements ProofOfX {
 		for (int i = 0; i < DIFICULTAD; i++ ) {
 			ceros += "0";
 		}
-		while (!nonceEncontrado && ejecutar) {
+		while (!nonceEncontrado && ManejadorBlockchain.ejecutarPoW) {
 			if(bloque.darTransacciones().size() > 0) {
 				byte[] encodedhash = digest.digest(bloque.toString().getBytes(StandardCharsets.UTF_8));
 				hash = new String(Hex.encode(encodedhash));
@@ -49,16 +49,16 @@ public class ProofOfWork implements ProofOfX {
 				}
 			}
 		}
-		if (!ejecutar) {
+		if (!ManejadorBlockchain.ejecutarPoW) {
 			hash = null;
 		}
 		return hash;
 	}
 
-	@Override
-	public void detenerEjecucion() {
-		ejecutar = false;
-	}
+//	@Override
+//	public void detenerEjecucion() {
+//		ejecutar = false;
+//	}
 
 	@Override
 	public String toString () {
