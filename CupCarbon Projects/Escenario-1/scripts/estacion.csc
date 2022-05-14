@@ -47,7 +47,6 @@ loop
 		end
 	end
 	if(tipo=="aviso")
-		cprint "AVISO"
 		stopProof
 		data mensaje "avisoARepetidor" id id
 		if(idRepetidor1!=idN)
@@ -95,6 +94,8 @@ loop
 	end
 	if(tipo=="bloqueValido")
 		decipher params idN idEstacion
+		cprint id
+		cprint idEstacion
 		if(id==idEstacion)
 			savevalidation	
 		else
@@ -130,7 +131,6 @@ loop
 		end
 	end
 	if(bloqueNuevo!="")
-		cprint "BLOQUENUEVO"
 		data aviso "avisoARepetidor" id id
 		if(idRepetidor1!=-1)
 			send aviso idRepetidor1 

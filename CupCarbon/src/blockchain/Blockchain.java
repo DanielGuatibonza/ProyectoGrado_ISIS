@@ -48,6 +48,7 @@ public class Blockchain extends Thread {
 				Bloque bloqueActual = bloques.get(bloques.size() - 1);
 				if (bloqueActual.darEstado().equals(Estado.ABIERTO)) {
 					boolean bloqueGenerado = bloqueActual.ejecutar();
+					System.out.println(estacion.getId() + " Blockchain bloques " + bloques.size());
 					if (bloqueGenerado) {
 						estacion.getScript().addVariable("bloqueNuevo", bloqueActual.toString());
 					} else {
@@ -92,6 +93,10 @@ public class Blockchain extends Thread {
 		}
 	}
 
+	public int darIdEstacion () {
+		return estacion.getId();
+	}
+	
 	public void recibirTransaccion (String pTransaccion) {
 		Transaccion temporal = new Transaccion (pTransaccion);
 		boolean encontrada = false;
@@ -113,9 +118,16 @@ public class Blockchain extends Thread {
 			estacion.getScript().addVariable("reenviarTransaccion", "false");
 		}
 		else {
-			Bloque ultimoBloque = bloques.get(bloques.size()-1);
-			if (ultimoBloque.darEstado().equals(Estado.ABIERTO)) {
-				ultimoBloque.agregarTransaccion(temporal);
+			Bloque ultimoBloque = null;
+			if (bloques.size() > 0 )
+			{
+				ultimoBloque = bloques.get(bloques.size()-1);
+				if (ultimoBloque.darEstado().equals(Estado.ABIERTO)) {
+					ultimoBloque.agregarTransaccion(temporal);
+				}
+				else {
+					transaccionesTemporales.add(temporal);
+				}
 			}
 			else {
 				transaccionesTemporales.add(temporal);
@@ -138,13 +150,13 @@ public class Blockchain extends Thread {
 		if (ultimo.darEstado().equals(Bloque.Estado.ABIERTO)) {
 			//ultimo.detenerEjecucion();
 			ManejadorBlockchain.ejecutarPoW = false;
+			bloques.remove(bloques.size() - 1);
 		}
 	}
 
 	public void reemplazarBloque (String bloqueStr, String hashAnterior, String hashUltimo) {
 		Bloque nuevoBloque = new Bloque (bloqueStr, hashAnterior);
 		nuevoBloque.establecerHash(hashUltimo);
-		bloques.remove(bloques.size() - 1);
 		bloques.add(nuevoBloque);
 		bloques.add(new Bloque (hashUltimo, estacion.getId()));
 	}

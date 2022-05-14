@@ -48,15 +48,18 @@ public class Command_VALIDATE extends Command {
 		
 		try {
 			digest = MessageDigest.getInstance("SHA-256");
-			String ultimoBloqueHashAnterior = bloques.get(bloques.size() - 1).darHashAnterior();
+			String ultimoBloqueHashAnterior = null;
+			if (bloques.size() > 0) {
+				ultimoBloqueHashAnterior = bloques.get(bloques.size() - 1).darHashAnterior();
+			}
+			
 			if(ultimoBloqueHashAnterior == null) {
 				ultimoBloqueHashAnterior = "null";
 			}
 			if (hashAnterior.equals(ultimoBloqueHashAnterior)) {
-				System.out.println("ENTRÉ");
 				byte[] encodedhash = digest.digest(bloque.getBytes(StandardCharsets.UTF_8));
 				String hashActual = new String(Hex.encode(encodedhash)); 
-				System.out.println(sensor.getId() + " VALIDO " + hashActual);
+				System.out.println(sensor.getId() + " VALIDANDO " + hashActual);
 				
 				String ceros = ""; 
 				for (int i = 0; i < ProofOfWork.DIFICULTAD; i++ ) {

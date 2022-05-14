@@ -13,7 +13,6 @@ public class Command_STOP_PROOF extends Command {
 	
 	@Override
 	public double execute() {
-		System.out.println(sensor.getId() + " AVISADO");
 		Blockchain blockchain = ManejadorBlockchain.blockchains.get(sensor.getId());
 		blockchain.detenerProof();
 		return 0;

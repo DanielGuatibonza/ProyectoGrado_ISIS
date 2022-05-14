@@ -38,7 +38,7 @@ public class Command_SET_TIMESTAMP extends Command {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Set timestamp");
+		System.out.println("Set timestamp " + idEstacion);
 		blockchain.establecerTimestamp(idEstacion, timestamp);
 		return 0;
 	}
