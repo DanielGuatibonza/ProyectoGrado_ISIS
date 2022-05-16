@@ -43,20 +43,25 @@ public class Command_VALIDATE extends Command {
 		String[] partes = bloque.split(" % ");
 		String hashAnterior = partes[partes.length - 1].split("= ")[1];
 		Blockchain blockchain = ManejadorBlockchain.blockchains.get(sensor.getId());
+		
+		while (!blockchain.darValidando()) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		ArrayList<Bloque> bloques = blockchain.darBloques();
 		MessageDigest digest;
 		
 		try {
 			digest = MessageDigest.getInstance("SHA-256");
-			String ultimoBloqueHashAnterior = null;
+			String ultimoBloqueHash = "null";
 			if (bloques.size() > 0) {
-				ultimoBloqueHashAnterior = bloques.get(bloques.size() - 1).darHashAnterior();
+				ultimoBloqueHash = bloques.get(bloques.size() - 1).darHash();
 			}
-			
-			if(ultimoBloqueHashAnterior == null) {
-				ultimoBloqueHashAnterior = "null";
-			}
-			if (hashAnterior.equals(ultimoBloqueHashAnterior)) {
+			if (hashAnterior.equals(ultimoBloqueHash)) {
 				byte[] encodedhash = digest.digest(bloque.getBytes(StandardCharsets.UTF_8));
 				String hashActual = new String(Hex.encode(encodedhash)); 
 				System.out.println(sensor.getId() + " VALIDANDO " + hashActual);
@@ -68,13 +73,17 @@ public class Command_VALIDATE extends Command {
 				// Detener ejecución del bloque y agregar el bloque recibido
 				if (hashActual.startsWith(ceros)) {
 					sensor.getScript().addVariable(arg3, sensor.getScript().getVariableValue(arg2));
+					System.out.println(sensor.getId() + " VALIDATE - ReemplazarBloque ");
 					blockchain.reemplazarBloque(bloque, hashAnterior, hashActual);	
+					blockchain.establecerValidando(false);
 				}
 				else {
+					System.out.println("INVALIDO HASH: " + hashActual);
 					sensor.getScript().addVariable(arg3, "invalido");
 				}
 			}
 			else {
+				System.out.println(sensor.getId() + " INVALIDO HASH: " + hashAnterior + " vs. " + ultimoBloqueHash + " Size: " + bloques.size());
 				sensor.getScript().addVariable(arg3, "invalido");
 			}
 		} catch (Exception e) {

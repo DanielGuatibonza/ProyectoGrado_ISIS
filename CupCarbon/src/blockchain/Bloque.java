@@ -74,11 +74,9 @@ public class Bloque {
 			digest = MessageDigest.getInstance("SHA-256");
 			String[] partes = cadena.split(" % ");
 			transaccionesStr = partes[0].split("= ")[1];
-			//System.out.println(transaccionesStr);
 			String[] pTransacciones = transaccionesStr.split("&");
 			for (int i = 0; i < pTransacciones.length; i++) {
 				if(!pTransacciones[i].equals("")) {
-					//System.out.println("PARAMETROS: " + pTransacciones[i]);
 					transacciones.add(new Transaccion(pTransacciones[i]));	
 				}
 			}
@@ -177,10 +175,6 @@ public class Bloque {
 		}
 		return ejecuto;
 	}
-
-//	public void detenerEjecucion () {
-//		proof.detenerEjecucion();
-//	}
 	
 	public JSONObject darJSONObject() {
 		JSONObject bloqueJson = new JSONObject();
@@ -204,6 +198,10 @@ public class Bloque {
 
 	@Override
 	public String toString () {
-		return "Transacciones= " + transaccionesStr + " % Merkle root= " + merkleRoot + " % Nonce= " + nonce + " % Proof= " + proof.toString() + " % ID Estacion= " + idEstacion + " % Hash anterior= " + hashAnterior;  
+		String hashAnteriorStr = hashAnterior;
+		if (hashAnterior == null) {
+			hashAnteriorStr = "null";
+		}
+		return "Transacciones= " + transaccionesStr + " % Merkle root= " + merkleRoot + " % Nonce= " + nonce + " % Proof= " + proof.toString() + " % ID Estacion= " + idEstacion + " % Hash anterior= " + hashAnteriorStr;  
 	}
 }

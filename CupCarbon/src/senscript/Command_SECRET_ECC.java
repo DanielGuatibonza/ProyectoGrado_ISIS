@@ -31,7 +31,6 @@ public class Command_SECRET_ECC extends Command {
 		if (llavePublicaOtro !=null) {
 			byte[] llavePrivadaPropia = ECC.hexStringToByteArray(sensor.getScript().getVariableValue(arg3));
 			byte[] secreto = ECC.doECDH(llavePrivadaPropia, llavePublicaOtro);
-			System.out.println("Tamaño llave simétrica: "+secreto.length);
 			ECCKeys_Manager.agregarLlaveCompartida(sensor.getId(), Integer.parseInt(sensor.getScript().getVariableValue(arg1)), secreto);
 			return 0;
 		}

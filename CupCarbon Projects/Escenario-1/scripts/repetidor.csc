@@ -81,15 +81,3 @@ loop
 			end
 		end
 	end
-	if(tipo=="avisoARepetidor")
-		data aviso "aviso" id id
-		if(idEstacion1==idN)
-			if(idEstacion2!=-1)
-				send aviso idEstacion2
-			end
-		else
-			if(idEstacion1!=-1)
-				send aviso idEstacion1
-			end
-		end
-	end

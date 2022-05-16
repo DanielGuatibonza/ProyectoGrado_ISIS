@@ -30,8 +30,8 @@ public class Command_SET_TIMESTAMP extends Command {
 	@Override
 	public synchronized double execute() {
 		
-		Blockchain blockchain = ManejadorBlockchain.blockchains.get(sensor.getId());
 		int idEstacion = Integer.parseInt(sensor.getScript().getVariableValue(arg2));
+		Blockchain blockchain = ManejadorBlockchain.blockchains.get(sensor.getId());
 		Date timestamp = null;
 		try {
 			timestamp = Bloque.FORMATO.parse(sensor.getScript().getVariableValue(arg1));

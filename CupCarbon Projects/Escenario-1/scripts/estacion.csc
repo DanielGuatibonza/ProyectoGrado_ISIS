@@ -10,7 +10,7 @@ data mensaje "registroEstacion" id pub
 send mensaje *
 
 loop
-	wait 1000
+	delay 1000
 	read m
 	rdata m tipo idN params
 	if(tipo=="registroRepetidor")
@@ -46,37 +46,9 @@ loop
 			end
 		end
 	end
-	if(tipo=="aviso")
-		stopProof
-		data mensaje "avisoARepetidor" id id
-		if(idRepetidor1!=idN)
-			if(idRepetidor1!=-1)
-				send mensaje idRepetidor1 
-			end
-		end
-		if(idRepetidor2!=idN)
-			if(idRepetidor2!=-1)
-				send mensaje idRepetidor2
-			end
-		end
-	end
 	if(tipo=="bloqueAValidar")
 		decipher params idN contenido
 		rdata contenido idEstacionGeneradora bloque
-		validateblock bloque idEstacionGeneradora respuestaValidacion
-		if(respuestaValidacion!="invalido")
-			cprint respuestaValidacion
-			if(idRepetidor1!=-1)
-				cipher respuestaValidacion idRepetidor1 respuestaCifrada
-				data mensajeValidacion "bloqueValidoARepetidor" id respuestaCifrada
-    				send mensajeValidacion idRepetidor1 
-			end
-			if(idRepetidor2!=-1)
-    				cipher respuestaValidacion idRepetidor2 respuestaCifrada
-				data mensajeValidacion "bloqueValidoARepetidor" id respuestaCifrada
-    				send mensajeValidacion idRepetidor2
-			end
-		end
 		if(idRepetidor1==idN)
 			if(idRepetidor2!=-1)
     				cipher contenido idRepetidor2 contenidoCifrado
@@ -91,24 +63,36 @@ loop
 				send mensaje idRepetidor1
 			end
 		end
+		validateblock bloque idEstacionGeneradora respuestaValidacion
+		if(respuestaValidacion!="invalido")
+			if(idRepetidor1==idN)
+				cipher respuestaValidacion idRepetidor1 respuestaCifrada
+				data mensajeValidacion "bloqueValidoARepetidor" id respuestaCifrada
+    				send mensajeValidacion idRepetidor1 
+			else
+    				cipher respuestaValidacion idRepetidor2 respuestaCifrada
+				data mensajeValidacion "bloqueValidoARepetidor" id respuestaCifrada
+    				send mensajeValidacion idRepetidor2
+			end
+		end
+
 	end
 	if(tipo=="bloqueValido")
 		decipher params idN idEstacion
-		cprint id
-		cprint idEstacion
-		if(id==idEstacion)
-			savevalidation	
-		else
+		savevalidation idEstacion
+		if(idN==idRepetidor2)
 			if(idRepetidor1!=-1)
 				cipher idEstacion idRepetidor1 respuestaCifrada
 				data mensajeValidacion "bloqueValidoARepetidor" id respuestaCifrada
     				send mensajeValidacion idRepetidor1 
 			end
+		end
+		if(idN==idRepetidor1)
 			if(idRepetidor2!=-1)
     				cipher idEstacion idRepetidor2 respuestaCifrada
 				data mensajeValidacion "bloqueValidoARepetidor" id respuestaCifrada
     				send mensajeValidacion idRepetidor2
-			end			
+			end
 		end
 	end
 	if(tipo=="timestamp")
@@ -131,13 +115,6 @@ loop
 		end
 	end
 	if(bloqueNuevo!="")
-		data aviso "avisoARepetidor" id id
-		if(idRepetidor1!=-1)
-			send aviso idRepetidor1 
-		end
-		if(idRepetidor2!=-1)
-			send aviso idRepetidor2
-		end
 		data contenido id bloqueNuevo
 		if(idRepetidor1!=-1)
     			cipher contenido idRepetidor1 contenidoCifrado

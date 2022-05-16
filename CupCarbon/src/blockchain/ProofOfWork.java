@@ -55,11 +55,6 @@ public class ProofOfWork implements ProofOfX {
 		return hash;
 	}
 
-//	@Override
-//	public void detenerEjecucion() {
-//		ejecutar = false;
-//	}
-
 	@Override
 	public String toString () {
 		return "Proof of Work, dificultad " + DIFICULTAD;

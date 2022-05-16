@@ -29,8 +29,8 @@ public class Blockchain extends Thread {
 		estacion.getScript().addVariable("reenviarTransaccion", "false");
 		estacion.getScript().addVariable("timestampUltimo", "");
 
-		if(estacion.getId() == 1) {
-			try (FileWriter file = new FileWriter("data/blockchain.json")) {
+//		if(estacion.getId() == 1) {
+			try (FileWriter file = new FileWriter("data/blockchain-" + estacion.getId() + ".json")) {
 				jsonArray = new JSONArray();
 				file.write(jsonArray.toJSONString()); 
 				file.flush();
@@ -38,7 +38,7 @@ public class Blockchain extends Thread {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+//		}
 	}
 
 	@Override
@@ -48,11 +48,14 @@ public class Blockchain extends Thread {
 				Bloque bloqueActual = bloques.get(bloques.size() - 1);
 				if (bloqueActual.darEstado().equals(Estado.ABIERTO)) {
 					boolean bloqueGenerado = bloqueActual.ejecutar();
-					System.out.println(estacion.getId() + " Blockchain bloques " + bloques.size());
 					if (bloqueGenerado) {
+						ManejadorBlockchain.ejecutarPoW = false;
 						estacion.getScript().addVariable("bloqueNuevo", bloqueActual.toString());
 					} else {
 						validando = true;
+						bloques.remove(bloques.size() - 1);
+						System.out.println(estacion.getId() + " Blockchain bloques remove " + bloques.size());
+
 					}
 				}
 				else if (bloqueActual.darEstado().equals(Estado.EN_ESPERA)) {
@@ -70,9 +73,9 @@ public class Blockchain extends Thread {
 						ManejadorBlockchain.ejecutarPoW = true;
 						bloques.add(nuevoBloque);
 
-						if(estacion.getId() == 1) {
+//						if(estacion.getId() == 1) {
 							agregarBloqueAJSON(bloqueActual);
-						}
+//						}
 					}
 					else {
 						try {
@@ -139,6 +142,14 @@ public class Blockchain extends Thread {
 	public ArrayList<Bloque> darBloques () {
 		return bloques;
 	}
+	
+	public boolean darValidando() {
+		return validando;
+	}
+	
+	public void establecerValidando (boolean pValidando) {
+		validando = pValidando;
+	}
 
 	public void recibirConfirmacion () {
 		System.out.println(estacion.getId() + " - Entró recibir confirmación. Bloque " + bloques.size() + " # transacciones: " + (bloques.get(0).darTransacciones().size()));
@@ -146,19 +157,19 @@ public class Blockchain extends Thread {
 	}
 
 	public void detenerProof () {
-		Bloque ultimo = bloques.get(bloques.size() - 1);
-		if (ultimo.darEstado().equals(Bloque.Estado.ABIERTO)) {
-			//ultimo.detenerEjecucion();
-			ManejadorBlockchain.ejecutarPoW = false;
-			bloques.remove(bloques.size() - 1);
-		}
+
 	}
 
 	public void reemplazarBloque (String bloqueStr, String hashAnterior, String hashUltimo) {
 		Bloque nuevoBloque = new Bloque (bloqueStr, hashAnterior);
 		nuevoBloque.establecerHash(hashUltimo);
 		bloques.add(nuevoBloque);
-		bloques.add(new Bloque (hashUltimo, estacion.getId()));
+		Bloque nuevoUltimoBloque = new Bloque (hashUltimo, estacion.getId());
+		for (Transaccion t: transaccionesTemporales) {
+			nuevoUltimoBloque.agregarTransaccion(t);
+		}
+		transaccionesTemporales = new ArrayList<Transaccion>();
+		bloques.add(nuevoUltimoBloque);
 	}
 
 	public void establecerTimestamp(int idEstacion, Date timestamp) {
@@ -170,13 +181,13 @@ public class Blockchain extends Thread {
 				break;
 			}
 		}
-		if(estacion.getId() == 1) {
+//		if(estacion.getId() == 1) {
 			agregarBloqueAJSON(actual);
-		}	
+//		}	
 	}
 
 	public void agregarBloqueAJSON(Bloque bloque) {
-		try (FileWriter file = new FileWriter("data/blockchain.json")) {
+		try (FileWriter file = new FileWriter("data/blockchain-" + estacion.getId() + ".json")) {
 			JSONObject bloqueJson = bloque.darJSONObject();
 			jsonArray.add(bloqueJson);
 			file.write(jsonArray.toJSONString()); 
