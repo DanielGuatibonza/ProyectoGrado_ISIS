@@ -23,8 +23,11 @@ import org.datavec.api.records.reader.RecordReader;
 import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
+import org.deeplearning4j.datasets.iterator.impl.ListDataSetIterator;
+import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
+import org.deeplearning4j.nn.conf.Updater;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
@@ -45,17 +48,20 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 /**
  * Read a csv file. Fit and plot the data using Deeplearning4J.
  */
 public class Main {
 
-    public static boolean visualize = false;
+    public static boolean visualize = true;
     public static String dataLocalPath;
 
 
@@ -66,10 +72,19 @@ public class Main {
         ArrayList<DataSet> DataSetList = new ArrayList<>();
         DataSetList.add(ds);
 
-        plotDataset(DataSetList); //Plot the data, make sure we have the right data.
+        plotDataset(DataSetList, 1); //Plot the data, make sure we have the right data.
 
-        MultiLayerNetwork net = fitStraightline(ds);
+        
+        MultiLayerNetwork net = fitNN(ds);
 
+
+        //Train the network on the full data set, and evaluate in periodically
+//        DataSetIterator iterator = new ListDataSetIterator<>(DataSetList, 32);
+//        int nEpochs = 50000;
+//        for( int i=0; i<nEpochs; i++ ){
+//            iterator.reset();
+//            net.fit(iterator);
+//        }
         // Get the min and max x values, using Nd4j
         NormalizerMinMaxScaler preProcessor = new NormalizerMinMaxScaler();
         preProcessor.fit(ds);
@@ -81,7 +96,7 @@ public class Main {
 
         //plot on by default
         if (visualize) {
-            plotDataset(DataSetList);    //Plot data and model fit.
+            plotDataset(DataSetList, 2);    //Plot data and model fit.
         }
     }
 
@@ -119,6 +134,46 @@ public class Main {
         net.init();
         net.setListeners(new ScoreIterationListener(1));
 
+        for (int i = 0; i < nEpochs; i++) {
+            net.fit(ds);
+        }
+
+        return net;
+    }
+    
+    private static MultiLayerNetwork fitNN(DataSet ds) {
+
+        int seed = 12345;
+        double learningRate = 0.00001;
+        int numInput = 1;
+        int numOutputs = 1;
+        int nHidden1 = 20;
+        int nHidden2 = 10;
+        int nHidden3 = 5;
+        MultiLayerConfiguration conf =new NeuralNetConfiguration.Builder()
+                .seed(seed)
+                .weightInit(WeightInit.XAVIER)
+                .updater(new Nesterovs(learningRate, 0.9))
+                .list()
+                .layer(0, new DenseLayer.Builder().nIn(numInput).nOut(nHidden1)
+                        .activation(Activation.RELU) //Change this to RELU and you will see the net learns very well very quickly
+                        .build())
+                .layer(1, new DenseLayer.Builder().nIn(nHidden1).nOut(nHidden2)
+                        .activation(Activation.RELU) //Change this to RELU and you will see the net learns very well very quickly
+                        .build())
+                .layer(2, new DenseLayer.Builder().nIn(nHidden2).nOut(nHidden3)
+                        .activation(Activation.RELU) //Change this to RELU and you will see the net learns very well very quickly
+                        .build())
+                .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
+                        .activation(Activation.IDENTITY)
+                        .nIn(nHidden3).nOut(numOutputs).build())
+                .build();
+
+        MultiLayerNetwork net = new MultiLayerNetwork(conf);
+        net.init();
+        net.setListeners(new ScoreIterationListener(1));
+        
+        int nEpochs = 25000;
         for (int i = 0; i < nEpochs; i++) {
             net.fit(ds);
         }
@@ -163,17 +218,17 @@ public class Main {
     /**
      * Generate an xy plot of the datasets provided.
      */
-    private static void plotDataset(ArrayList<DataSet> DataSetList) {
+    private static void plotDataset(ArrayList<DataSet> DataSetList, int dscounter) {
 
         XYSeriesCollection c = new XYSeriesCollection();
+        int contador = 0;
 
-        int dscounter = 1; //use to name the dataseries
         for (DataSet ds : DataSetList) {
             INDArray features = ds.getFeatures();
             INDArray outputs = ds.getLabels();
 
             int nRows = features.rows();
-            XYSeries series = new XYSeries("S" + dscounter);
+            XYSeries series = new XYSeries("S" + dscounter + contador++);
             for (int i = 0; i < nRows; i++) {
                 series.add(features.getDouble(i), outputs.getDouble(i));
             }
@@ -189,15 +244,15 @@ public class Main {
         boolean tooltips = false;
         boolean urls = false;
         //noinspection ConstantConditions
-//        JFreeChart chart = ChartFactory.createScatterPlot(title, xAxisLabel, yAxisLabel, c, orientation, legend, tooltips, urls);
-//        JPanel panel = new ChartPanel(chart);
-//
-//        JFrame f = new JFrame();
-//        f.add(panel);
-//        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//        f.pack();
-//        f.setTitle("Training Data");
-//
-//        f.setVisible(true);
+        JFreeChart chart = ChartFactory.createScatterPlot(title, xAxisLabel, yAxisLabel, c, orientation, legend, tooltips, urls);
+        JPanel panel = new ChartPanel(chart);
+
+        JFrame f = new JFrame();
+        f.add(panel);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        f.pack();
+        f.setTitle("Training Data");
+
+        f.setVisible(true);
     }
 }
