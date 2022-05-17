@@ -22,7 +22,7 @@ public class Blockchain extends Thread {
 		estacion = pEstacion;
 		validando = false;
 		bloques = new ArrayList<Bloque>();
-		bloques.add(new Bloque(null, estacion.getId()));
+		bloques.add(new Bloque("null", estacion.getId()));
 		transaccionesTemporales = new ArrayList<Transaccion>();
 
 		estacion.getScript().addVariable("bloqueNuevo", "");

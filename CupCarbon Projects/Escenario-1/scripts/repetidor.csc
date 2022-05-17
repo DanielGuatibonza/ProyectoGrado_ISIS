@@ -14,7 +14,9 @@ loop
     		if(idEstacion1==-1)
 			set idEstacion1 idN
 		else
-			set idEstacion2 idN
+			if(idEstacion2==-1)
+				set idEstacion2 idN
+			end
 		end
 	end
 	if(tipo=="mensajeARepetidor")
@@ -25,7 +27,8 @@ loop
 				data mensaje "mensaje" id mensajeCifrado
 				send mensaje idEstacion2
 			end
-		else
+		end
+		if(idEstacion2==idN)
 			if(idEstacion1!=-1)
 				cipher mensajeDescifrado idEstacion1 mensajeCifrado
 				data mensaje "mensaje" id mensajeCifrado
@@ -41,7 +44,8 @@ loop
 				data mensaje "bloqueAValidar" id mensajeCifrado
 				send mensaje idEstacion2
 			end
-		else
+		end
+		if(idEstacion2==idN)
 			if(idEstacion1!=-1)
 				cipher contenidoDescifrado idEstacion1 mensajeCifrado
 				data mensaje "bloqueAValidar" id mensajeCifrado
@@ -57,7 +61,8 @@ loop
 				data mensaje "bloqueValido" id mensajeCifrado
 				send mensaje idEstacion2
 			end
-		else
+		end
+		if(idEstacion2==idN)
 			if(idEstacion1!=-1)
 				cipher contenidoDescifrado idEstacion1 mensajeCifrado
 				data mensaje "bloqueValido" id mensajeCifrado
@@ -73,7 +78,8 @@ loop
 				data mensaje "timestamp" id mensajeCifrado
 				send mensaje idEstacion2
 			end
-		else
+		end
+		if(idEstacion2==idN)
 			if(idEstacion1!=-1)
 				cipher contenidoDescifrado idEstacion1 mensajeCifrado
 				data mensaje "timestamp" id mensajeCifrado

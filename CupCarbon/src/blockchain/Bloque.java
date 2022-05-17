@@ -198,10 +198,6 @@ public class Bloque {
 
 	@Override
 	public String toString () {
-		String hashAnteriorStr = hashAnterior;
-		if (hashAnterior == null) {
-			hashAnteriorStr = "null";
-		}
-		return "Transacciones= " + transaccionesStr + " % Merkle root= " + merkleRoot + " % Nonce= " + nonce + " % Proof= " + proof.toString() + " % ID Estacion= " + idEstacion + " % Hash anterior= " + hashAnteriorStr;  
+		return "Transacciones= " + transaccionesStr + " % Merkle root= " + merkleRoot + " % Nonce= " + nonce + " % Proof= " + proof.toString() + " % ID Estacion= " + idEstacion + " % Hash anterior= " + hashAnterior;  
 	}
 }

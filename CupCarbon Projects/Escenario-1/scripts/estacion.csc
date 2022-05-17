@@ -17,8 +17,12 @@ loop
 		secretecc idN params priv
     		if(idRepetidor1==-1)
 			set idRepetidor1 idN
+			cprint idRepetidor1
 		else
-			set idRepetidor2 idN
+			if(idRepetidor2==-1)
+				set idRepetidor2 idN
+				cprint idRepetidor2
+			end
 		end
 	end
 	if(tipo=="detectarEstacion")
@@ -30,18 +34,18 @@ loop
 		decipher params idN mensajeDescifrado
 		savedata mensajeDescifrado
 		if(reenviarTransaccion=="true")
-			if(idRepetidor1!=-1)
-				if(idRepetidor1!=idN)
-    					cipher mensajeDescifrado idRepetidor1 mensajeCifrado
-					data mensaje "mensajeARepetidor" id mensajeCifrado
-					send mensaje idRepetidor1
-				end
-			end
-			if(idRepetidor2!=-1)
-				if(idRepetidor2!=idN)
+			if(idRepetidor1==idN)
+				if(idRepetidor2!=-1)
     					cipher mensajeDescifrado idRepetidor2 mensajeCifrado
 					data mensaje "mensajeARepetidor" id mensajeCifrado
 					send mensaje idRepetidor2
+				end
+			end
+			if(idRepetidor2==idN)
+				if(idRepetidor1!=-1)
+    					cipher mensajeDescifrado idRepetidor1 mensajeCifrado
+					data mensaje "mensajeARepetidor" id mensajeCifrado
+					send mensaje idRepetidor1
 				end
 			end
 		end
@@ -69,7 +73,8 @@ loop
 				cipher respuestaValidacion idRepetidor1 respuestaCifrada
 				data mensajeValidacion "bloqueValidoARepetidor" id respuestaCifrada
     				send mensajeValidacion idRepetidor1 
-			else
+			end
+			if(idRepetidor2==idN)
     				cipher respuestaValidacion idRepetidor2 respuestaCifrada
 				data mensajeValidacion "bloqueValidoARepetidor" id respuestaCifrada
     				send mensajeValidacion idRepetidor2
