@@ -1,12 +1,1 @@
-[
-    {
-        "num_capas": [1, 2, 3],
-        "num_neuronas_1": [64, 16],
-        "activacion_1": ["relu", "sigmoid"],
-        "num_neuronas_2": [32, 8],
-        "activacion_2": ["relu", "sigmoid"],
-        "num_neuronas_3": [16, 4],
-        "activacion_3": ["relu", "sigmoid"],
-        "learning_rate": [0.1, 0.000001]
-    }
-]
+[]

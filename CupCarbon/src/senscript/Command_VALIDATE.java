@@ -78,12 +78,10 @@ public class Command_VALIDATE extends Command {
 					blockchain.establecerValidando(false);
 				}
 				else {
-					System.out.println("INVALIDO HASH: " + hashActual);
 					sensor.getScript().addVariable(arg3, "invalido");
 				}
 			}
 			else {
-				System.out.println(sensor.getId() + " INVALIDO HASH: " + hashAnterior + " vs. " + ultimoBloqueHash + " Size: " + bloques.size());
 				sensor.getScript().addVariable(arg3, "invalido");
 			}
 		} catch (Exception e) {
