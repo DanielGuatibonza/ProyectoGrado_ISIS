@@ -4,8 +4,8 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import blockchain.Bloque.Estado;
 import device.SensorNode;
@@ -32,7 +32,7 @@ public class Blockchain extends Thread {
 //		if(estacion.getId() == 1) {
 			try (FileWriter file = new FileWriter("data/blockchain-" + estacion.getId() + ".json")) {
 				jsonArray = new JSONArray();
-				file.write(jsonArray.toJSONString()); 
+				file.write(jsonArray.toString()); 
 				file.flush();
 
 			} catch (Exception e) {
@@ -189,8 +189,8 @@ public class Blockchain extends Thread {
 	public void agregarBloqueAJSON(Bloque bloque) {
 		try (FileWriter file = new FileWriter("data/blockchain-" + estacion.getId() + ".json")) {
 			JSONObject bloqueJson = bloque.darJSONObject();
-			jsonArray.add(bloqueJson);
-			file.write(jsonArray.toJSONString()); 
+			jsonArray.put(bloqueJson);
+			file.write(jsonArray.toString()); 
 			file.flush();
 
 		} catch (Exception e) {

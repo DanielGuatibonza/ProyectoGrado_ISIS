@@ -3,7 +3,7 @@ package blockchain;
 import java.text.ParseException;
 import java.util.Date;
 
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 
 public class Transaccion {
 	

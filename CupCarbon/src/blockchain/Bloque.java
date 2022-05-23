@@ -1,6 +1,9 @@
 package blockchain;
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
@@ -8,10 +11,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
+import org.apache.commons.io.FileUtils;
 import org.bouncycastle.util.encoders.Hex;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 public class Bloque {
 
@@ -41,7 +45,9 @@ public class Bloque {
 
 
 	public Bloque(String hash, int pIdEstacion) {
-		try (FileReader reader = new FileReader("data/tareas.json"))
+
+        
+		try (InputStream is = FileUtils.openInputStream(new File("data/tareas.json")))
 		{
 			idEstacion = pIdEstacion;
 			nonce = (new Random()).nextInt(1000);
@@ -50,15 +56,15 @@ public class Bloque {
 			estado = Estado.ABIERTO;
 			digest = MessageDigest.getInstance("SHA-256");
 			hashAnterior = hash;
-			JSONParser jsonParser = new JSONParser();
-			Object obj = jsonParser.parse(reader);
-			JSONArray listaTareas = (JSONArray) obj;
+			
+			JSONTokener tokener = new JSONTokener(is);
+			JSONArray listaTareas = new JSONArray(tokener);
 
-			if (listaTareas.size() == 0){
+			if (listaTareas.length() == 0){
 				proof = new ProofOfWork(this);
 			}
 			else {
-				proof = new ProofOfLearning();
+				proof = new ProofOfLearning(this, listaTareas.getJSONObject(0));
 			}
 			
 
@@ -87,7 +93,7 @@ public class Bloque {
 				proof = new ProofOfWork(this);
 			}
 			else {
-				proof = new ProofOfLearning();
+				proof = new ProofOfLearning(partes[3].split(" parametros ")[1]);
 			}
 			
 			idEstacion = Integer.parseInt(partes[4].split("= ")[1]);
@@ -189,7 +195,7 @@ public class Bloque {
 		JSONObject transaccionJson = null;
 		for(Transaccion t: transacciones) {
 			transaccionJson = t.darJSONObject();
-			arrayTransacciones.add(transaccionJson);
+			arrayTransacciones.put(transaccionJson);
 		}
 		bloqueJson.put("transacciones", arrayTransacciones);
 		

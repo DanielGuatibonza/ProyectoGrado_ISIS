@@ -147,8 +147,8 @@ public class Main {
         double learningRate = 0.00001;
         int numInput = 1;
         int numOutputs = 1;
-        int nHidden1 = 20;
-        int nHidden2 = 10;
+        int nHidden1 = 18;
+        int nHidden2 = 9;
         int nHidden3 = 5;
         MultiLayerConfiguration conf =new NeuralNetConfiguration.Builder()
                 .seed(seed)
