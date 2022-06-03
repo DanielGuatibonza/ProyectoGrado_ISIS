@@ -23,6 +23,34 @@ public class Transaccion {
 	private double colorA;
 	private double colorB;
 	
+	public double darPH() {
+		return pH;
+	}
+
+	public double darTemperatura() {
+		return temperatura;
+	}
+
+	public double darTerneza() {
+		return terneza;
+	}
+
+	public double darMermaPorCoccion() {
+		return mermaPorCoccion;
+	}
+
+	public double darColorL() {
+		return colorL;
+	}
+
+	public double darColorA() {
+		return colorA;
+	}
+
+	public double darColorB() {
+		return colorB;
+	}
+
 	public Transaccion (int pIDSensor, Date pTimestamp, int pTiempoTranscurrido, double pLatitud, double pLongitud, double pPH, double pTemperatura,
 						double pTerneza, double pMermaPorCoccion, double pColorL, double pColorA, double pColorB) {
 		idSensor = pIDSensor;

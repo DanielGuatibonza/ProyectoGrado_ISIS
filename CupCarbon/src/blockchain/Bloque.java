@@ -135,6 +135,10 @@ public class Bloque {
 	public ArrayList<Transaccion> darTransacciones () {
 		return transacciones;
 	}
+	
+	public ProofOfX darProof() {
+		return proof;
+	}
 
 	public void incrementarConfirmaciones () {
 		confirmaciones++;
@@ -169,8 +173,8 @@ public class Bloque {
 	}
 
 	// True si lo generó, False si lo recibió
-	public boolean ejecutar () {
-		String respuesta = proof.ejecutar();
+	public boolean ejecutarPoW () {
+		String respuesta = (String)proof.ejecutar();
 		boolean ejecuto = true;
 		if (respuesta == null) {
 			ejecuto = false;

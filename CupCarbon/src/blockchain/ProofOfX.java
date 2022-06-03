@@ -2,7 +2,7 @@ package blockchain;
 
 public interface ProofOfX {
 	
-	public String ejecutar ();
+	public Object ejecutar();
 	
 	//public void detenerEjecucion ();
 }

@@ -22,7 +22,7 @@ public class Command_UPDATE_TIME extends Command {
 		if(tiempoAnterior == null) {
 			tiempoAnterior = 0;
 		}
-		ManejadorSensores.tiemposSensores.put(sensor.getId(), tiempoAnterior + Integer.parseInt(arg1));
+		ManejadorSensores.tiemposSensores.put(sensor.getId(), tiempoAnterior + Integer.parseInt(sensor.getScript().getVariableValue(arg1)));
 		return 0;
 	}
 

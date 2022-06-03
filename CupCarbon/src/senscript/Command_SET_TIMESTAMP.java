@@ -17,7 +17,7 @@ public class Command_SET_TIMESTAMP extends Command {
 	protected String arg1 = "" ;
 		
 	/**
-	 * ID de quien generó el bloque
+	 * Hash el bloque
 	 */
 	protected String arg2 = "" ;
 	
@@ -30,7 +30,7 @@ public class Command_SET_TIMESTAMP extends Command {
 	@Override
 	public synchronized double execute() {
 		
-		int idEstacion = Integer.parseInt(sensor.getScript().getVariableValue(arg2));
+		String hashBloque = sensor.getScript().getVariableValue(arg2);
 		Blockchain blockchain = ManejadorBlockchain.blockchains.get(sensor.getId());
 		Date timestamp = null;
 		try {
@@ -38,8 +38,8 @@ public class Command_SET_TIMESTAMP extends Command {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Set timestamp " + idEstacion);
-		blockchain.establecerTimestamp(idEstacion, timestamp);
+		System.out.println("Set timestamp " + hashBloque);
+		blockchain.establecerTimestamp(timestamp, hashBloque);
 		return 0;
 	}
 

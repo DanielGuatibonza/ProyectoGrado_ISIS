@@ -102,8 +102,8 @@ loop
 	end
 	if(tipo=="timestamp")
 		decipher params idN contenido
-		rdata contenido idEstacion timestamp
-		settimestamp timestamp idEstacion
+		rdata contenido timestamp hashUltimo
+		settimestamp timestamp hashUltimo
 		if(idRepetidor1==idN)
 			if(idRepetidor2!=-1)
     				cipher contenido idRepetidor2 contenidoCifrado
@@ -134,7 +134,7 @@ loop
 		set bloqueNuevo ""
 	end
 	if(timestampUltimo!="")
-		data contenido id timestampUltimo
+		data contenido timestampUltimo hashUltimo
 		if(idRepetidor1!=-1)
     			cipher contenido idRepetidor1 timestampCifrado
 			data mensaje "timestampARepetidor" id timestampCifrado

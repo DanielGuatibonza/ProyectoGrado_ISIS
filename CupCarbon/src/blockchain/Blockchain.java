@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.hamcrest.core.IsInstanceOf;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -28,6 +29,7 @@ public class Blockchain extends Thread {
 		estacion.getScript().addVariable("bloqueNuevo", "");
 		estacion.getScript().addVariable("reenviarTransaccion", "false");
 		estacion.getScript().addVariable("timestampUltimo", "");
+		estacion.getScript().addVariable("hashUltimo", "");
 
 //		if(estacion.getId() == 1) {
 			try (FileWriter file = new FileWriter("data/blockchain-" + estacion.getId() + ".json")) {
@@ -46,46 +48,50 @@ public class Blockchain extends Thread {
 		while (true) {
 			if(!validando) {
 				Bloque bloqueActual = bloques.get(bloques.size() - 1);
-				if (bloqueActual.darEstado().equals(Estado.ABIERTO)) {
-					boolean bloqueGenerado = bloqueActual.ejecutar();
-					if (bloqueGenerado) {
-						ManejadorBlockchain.ejecutarPoW = false;
-						estacion.getScript().addVariable("bloqueNuevo", bloqueActual.toString());
-						System.out.println(estacion.getId() + " Hash último " + bloqueActual.darHash());
-					} else {
-						validando = true;
-						bloques.remove(bloques.size() - 1);
-						
-						System.out.println(estacion.getId() + " Blockchain bloques remove " + bloques.size());
+				if(bloqueActual.darProof() instanceof ProofOfWork) {
+					if (bloqueActual.darEstado().equals(Estado.ABIERTO)) {
+						boolean bloqueGenerado = bloqueActual.ejecutarPoW();
+						if (bloqueGenerado) {
+							ManejadorBlockchain.ejecutarPoW = false;
+							estacion.getScript().addVariable("bloqueNuevo", bloqueActual.toString());
+							System.out.println(estacion.getId() + " Hash último " + bloqueActual.darHash());
+						} else {
+							validando = true;
+							bloques.remove(bloques.size() - 1);
 							
+							System.out.println(estacion.getId() + " Blockchain bloques remove " + bloques.size());
+								
+						}
+					}
+					else if (bloqueActual.darEstado().equals(Estado.EN_ESPERA)) {
+						if (bloqueActual.darConfirmaciones() > 4) {
+							bloqueActual.cerrarBloque();
+							bloqueActual.establecerTimestamp(new Date());
+							estacion.getScript().addVariable("timestampUltimo", bloqueActual.darTimestamp());
+							estacion.getScript().addVariable("hashUltimo", bloqueActual.darHash());
+	
+							Bloque nuevoBloque = new Bloque (bloqueActual.darHash(), estacion.getId());
+	
+							for (Transaccion t: transaccionesTemporales) {
+								nuevoBloque.agregarTransaccion(t);
+							}
+							transaccionesTemporales = new ArrayList<Transaccion>();
+							ManejadorBlockchain.ejecutarPoW = true;
+							bloques.add(nuevoBloque);
+	
+							agregarBloqueAJSON(bloqueActual);
+						}
+						else {
+							try {
+								sleep(100);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
 					}
 				}
-				else if (bloqueActual.darEstado().equals(Estado.EN_ESPERA)) {
-					if (bloqueActual.darConfirmaciones() > 4) {
-						bloqueActual.cerrarBloque();
-						bloqueActual.establecerTimestamp(new Date());
-						estacion.getScript().addVariable("timestampUltimo", bloqueActual.darTimestamp());
-
-						Bloque nuevoBloque = new Bloque (bloqueActual.darHash(), estacion.getId());
-
-						for (Transaccion t: transaccionesTemporales) {
-							nuevoBloque.agregarTransaccion(t);
-						}
-						transaccionesTemporales = new ArrayList<Transaccion>();
-						ManejadorBlockchain.ejecutarPoW = true;
-						bloques.add(nuevoBloque);
-
-//						if(estacion.getId() == 1) {
-							agregarBloqueAJSON(bloqueActual);
-//						}
-					}
-					else {
-						try {
-							sleep(100);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
+				else {
+					
 				}
 			}
 			else {
@@ -175,11 +181,11 @@ public class Blockchain extends Thread {
 		bloques.add(nuevoUltimoBloque);
 	}
 
-	public void establecerTimestamp(int idEstacion, Date timestamp) {
+	public void establecerTimestamp(Date timestamp, String hashUltimo) {
 		Bloque actual = null;
 		for (int i = bloques.size() - 1; i >= 0; i-- ) {
 			actual = bloques.get(i);
-			if (actual.darEstado().equals(Bloque.Estado.CERRADO) && actual.darIDEstacion() == idEstacion) {
+			if (actual.darEstado().equals(Bloque.Estado.CERRADO) && actual.darHash().equals(hashUltimo)) {
 				actual.establecerTimestamp(timestamp);
 				agregarBloqueAJSON(actual);
 				break;
@@ -197,6 +203,30 @@ public class Blockchain extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		if(estacion.getId() == 1) {
+			try (FileWriter file = new FileWriter("data/entrenamiento.csv", true)) {
+				ArrayList<Transaccion> transacciones = bloque.darTransacciones();
+				Transaccion transaccionActual;
+				for(int i=0; i<transacciones.size(); i++) {
+					transaccionActual = transacciones.get(i);
+					file.write(transaccionActual.darTemperatura() + ";" +
+					          transaccionActual.darPH() + ";" +
+					          transaccionActual.darTerneza() + ";" +
+					          transaccionActual.darMermaPorCoccion() + ";" +
+					          transaccionActual.darColorL() + ";" +
+					          transaccionActual.darColorA() + ";" +
+					          transaccionActual.darColorB() +
+					          transaccionActual.darTemperatura() + ";" +
+					          transaccionActual.darPH() + ";" +
+					          transaccionActual.darTerneza() + ";" +
+					          transaccionActual.darMermaPorCoccion() + ";" +
+					          transaccionActual.darColorL() + ";" +
+					          transaccionActual.darColorA() + ";" +
+					          transaccionActual.darColorB());
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
