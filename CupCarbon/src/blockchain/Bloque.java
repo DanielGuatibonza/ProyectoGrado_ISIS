@@ -2,6 +2,7 @@ package blockchain;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -13,6 +14,7 @@ import java.util.Random;
 
 import org.apache.commons.io.FileUtils;
 import org.bouncycastle.util.encoders.Hex;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -45,8 +47,6 @@ public class Bloque {
 
 
 	public Bloque(String hash, int pIdEstacion) {
-
-        
 		try (InputStream is = FileUtils.openInputStream(new File("data/tareas.json")))
 		{
 			idEstacion = pIdEstacion;
@@ -143,6 +143,10 @@ public class Bloque {
 	public void incrementarConfirmaciones () {
 		confirmaciones++;
 	}
+	
+	public void establecerEstado(Estado pEstado) {
+		estado = pEstado;
+	}
 
 	public void establecerTimestamp (Date pTimestamp) {
 		timestamp = pTimestamp;
@@ -184,6 +188,19 @@ public class Bloque {
 			estado = Estado.EN_ESPERA;
 		}
 		return ejecuto;
+	}
+	
+	public String ejecutarPoLe() {
+		String ruta = "models/autoencoder_" + idEstacion + ".bin";
+		MultiLayerNetwork net = (MultiLayerNetwork) proof.ejecutar();
+		System.out.println(idEstacion + " DE NUEVO EN BLOQUE");
+		try {
+			net.save(new File(ruta));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println(idEstacion + " MODELO GUARDADO");
+		return ruta;
 	}
 	
 	public JSONObject darJSONObject() {

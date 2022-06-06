@@ -119,6 +119,25 @@ loop
 			end
 		end
 	end
+	if(tipo=="rutaModelo")
+		decipher params idN contenido
+		rdata contenido idEstacion rutaModelo
+		saveroute idEstacion rutaModelo
+		if(idRepetidor1==idN)
+			if(idRepetidor2!=-1)
+    				cipher contenido idRepetidor2 contenidoCifrado
+				data mensaje "rutaModeloARepetidor" id contenidoCifrado
+				send mensaje idRepetidor2
+			end
+		end
+		if(idRepetidor2==idN)
+			if(idRepetidor1!=-1)
+				cipher contenido idRepetidor1 contenidoCifrado
+				data mensaje "rutaModeloARepetidor" id contenidoCifrado
+				send mensaje idRepetidor1
+			end
+		end
+	end
 	if(bloqueNuevo!="")
 		data contenido id bloqueNuevo
 		if(idRepetidor1!=-1)
@@ -146,4 +165,18 @@ loop
 			send mensaje idRepetidor2 
 		end
 		set timestampUltimo ""
+	end
+	if(rutaModelo!="")
+		data contenido id rutaModelo
+		if(idRepetidor1!=-1)
+    			cipher contenido idRepetidor1 contenidoCifrado
+			data mensaje "rutaModeloARepetidor" id contenidoCifrado
+			send mensaje idRepetidor1 
+		end
+		if(idRepetidor2!=-1)
+    			cipher contenido idRepetidor2 contenidoCifrado
+			data mensaje "rutaModeloARepetidor" id contenidoCifrado
+			send mensaje idRepetidor2 
+		end
+		set rutaModelo ""
 	end

@@ -87,3 +87,20 @@ loop
 			end
 		end
 	end
+	if(tipo=="rutaModeloARepetidor")
+		decipher params idN contenidoDescifrado
+		if(idEstacion1==idN)
+			if(idEstacion2!=-1)
+				cipher contenidoDescifrado idEstacion2 mensajeCifrado
+				data mensaje "rutaModelo" id mensajeCifrado
+				send mensaje idEstacion2
+			end
+		end
+		if(idEstacion2==idN)
+			if(idEstacion1!=-1)
+				cipher contenidoDescifrado idEstacion1 mensajeCifrado
+				data mensaje "rutaModelo" id mensajeCifrado
+				send mensaje idEstacion1
+			end
+		end
+	end

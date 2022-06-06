@@ -76,6 +76,7 @@ public class Main {
 
         
         MultiLayerNetwork net = fitNN(ds);
+        net.save(new File("models/prueba.bin"));
 
 
         //Train the network on the full data set, and evaluate in periodically
@@ -206,7 +207,7 @@ public class Main {
      * <p>
      * This can be used as is for regression.
      */
-    private static DataSet readCSVDataset(String filename) throws IOException, InterruptedException {
+    public static DataSet readCSVDataset(String filename) throws IOException, InterruptedException {
         int batchSize = 4;
         RecordReader rr = new CSVRecordReader(1, ";");
         rr.initialize(new FileSplit(new File(filename)));
@@ -218,7 +219,7 @@ public class Main {
     /**
      * Generate an xy plot of the datasets provided.
      */
-    private static void plotDataset(ArrayList<DataSet> DataSetList, int dscounter) {
+    public static void plotDataset(ArrayList<DataSet> DataSetList, int dscounter) {
 
         XYSeriesCollection c = new XYSeriesCollection();
         int contador = 0;

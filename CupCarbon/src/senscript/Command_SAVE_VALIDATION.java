@@ -18,7 +18,7 @@ public class Command_SAVE_VALIDATION extends Command {
 	}
 
 	@Override
-	public double execute() {
+	public synchronized double execute() {
 		int idEstacion = Integer.parseInt(sensor.getScript().getVariableValue(arg1));
 
 		if (idEstacion == sensor.getId()) {

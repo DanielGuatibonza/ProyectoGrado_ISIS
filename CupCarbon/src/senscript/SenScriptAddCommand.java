@@ -495,6 +495,9 @@ public final class SenScriptAddCommand {
 		if(inst[0].toLowerCase().equals("savevalidation")) {
 			command = new Command_SAVE_VALIDATION(sensorNode, inst[1]);
 		}
+		if(inst[0].toLowerCase().equals("saveroute")) {
+			command = new Command_SAVE_ROUTE(sensorNode, inst[1], inst[2]);
+		}
 		//-------
 		// This part must be here (at the end). All new commands must be added before (above)
 		
