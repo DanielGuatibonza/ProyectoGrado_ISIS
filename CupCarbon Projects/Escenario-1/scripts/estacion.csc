@@ -11,17 +11,16 @@ send mensaje *
 
 loop
 	delay 1000
+	atget id id
 	read m
 	rdata m tipo idN params
 	if(tipo=="registroRepetidor")
 		secretecc idN params priv
     		if(idRepetidor1==-1)
 			set idRepetidor1 idN
-			cprint idRepetidor1
 		else
 			if(idRepetidor2==-1)
 				set idRepetidor2 idN
-				cprint idRepetidor2
 			end
 		end
 	end
@@ -121,8 +120,8 @@ loop
 	end
 	if(tipo=="rutaModelo")
 		decipher params idN contenido
-		rdata contenido idEstacion rutaModelo
-		saveroute idEstacion rutaModelo
+		rdata contenido idEstacion rutaModeloRecv
+		saveroute idEstacion rutaModeloRecv
 		if(idRepetidor1==idN)
 			if(idRepetidor2!=-1)
     				cipher contenido idRepetidor2 contenidoCifrado

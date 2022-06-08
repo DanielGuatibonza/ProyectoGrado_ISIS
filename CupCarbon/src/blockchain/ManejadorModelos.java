@@ -20,6 +20,7 @@ public class ManejadorModelos {
 		int mejorConteo = 0;
 		for(int idActual: elegidosMejorModelo.keySet()) {
 			int conteoActual = elegidosMejorModelo.get(idActual);
+			System.out.println(" idActual: " + idActual + " | " + conteoActual);
 			if(mejorConteo < conteoActual) {
 				mejorConteo = conteoActual;
 				mejorId = idActual;

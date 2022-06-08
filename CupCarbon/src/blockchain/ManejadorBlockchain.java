@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class ManejadorBlockchain {
 
-	public final static int NUM_NODOS = 8;
+	public final static int NUM_NODOS = 3;
 	public static Map<Integer, Blockchain> blockchains = new HashMap<Integer, Blockchain>(); 
 	public static boolean ejecutarPoW = true;
 	

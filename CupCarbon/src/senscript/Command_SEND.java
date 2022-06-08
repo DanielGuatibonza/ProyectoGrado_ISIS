@@ -114,7 +114,7 @@ public class Command_SEND extends Command {
 	// No ACK for the broadcast sending : arg2.equals("*") && arg3.equals("")
 	// ---------------------------------------------------------------------------------------------------------------------
 	@Override
-	public double execute() {
+	public synchronized double execute() {
 		boolean couleur = false;
 		if(arg1.equals("!color")) couleur = true;
 		

@@ -1,8 +1,6 @@
 package blockchain;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -56,7 +54,7 @@ public class Bloque {
 			estado = Estado.ABIERTO;
 			digest = MessageDigest.getInstance("SHA-256");
 			hashAnterior = hash;
-			
+			timestamp = FORMATO.parse("1970-01-01 00:00:00");
 			JSONTokener tokener = new JSONTokener(is);
 			JSONArray listaTareas = new JSONArray(tokener);
 
@@ -97,6 +95,7 @@ public class Bloque {
 			}
 			
 			idEstacion = Integer.parseInt(partes[4].split("= ")[1]);
+			timestamp = FORMATO.parse(partes[5].split("= ")[1]);
 			hashAnterior = partes[partes.length - 1].split("= ")[1];
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -193,18 +192,20 @@ public class Bloque {
 	public String ejecutarPoLe() {
 		String ruta = "models/autoencoder_" + idEstacion + ".bin";
 		MultiLayerNetwork net = (MultiLayerNetwork) proof.ejecutar();
-		System.out.println(idEstacion + " DE NUEVO EN BLOQUE");
 		try {
 			net.save(new File(ruta));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println(idEstacion + " MODELO GUARDADO");
+		byte[] encodedhash = digest.digest(toString().getBytes(StandardCharsets.UTF_8));
+		hash = new String(Hex.encode(encodedhash));
+		System.out.println(idEstacion + " MODELO GUARDADO " + ruta);
 		return ruta;
 	}
 	
 	public JSONObject darJSONObject() {
 		JSONObject bloqueJson = new JSONObject();
+		bloqueJson.put("tipoProof", proof.toString());
 		bloqueJson.put("idEstacion", idEstacion);
 		bloqueJson.put("hash", hash);
 		bloqueJson.put("hashAnterior", hashAnterior);
@@ -225,6 +226,6 @@ public class Bloque {
 
 	@Override
 	public String toString () {
-		return "Transacciones= " + transaccionesStr + " % Merkle root= " + merkleRoot + " % Nonce= " + nonce + " % Proof= " + proof.toString() + " % ID Estacion= " + idEstacion + " % Hash anterior= " + hashAnterior;  
+		return "Transacciones= " + transaccionesStr + " % Merkle root= " + merkleRoot + " % Nonce= " + nonce + " % Proof= " + proof.toString() + " % ID Estacion= " + idEstacion + " % Timestamp= " + FORMATO.format(timestamp) + " % Hash anterior= " + hashAnterior;  
 	}
 }

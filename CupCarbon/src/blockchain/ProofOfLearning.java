@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
+
 import org.datavec.api.records.reader.RecordReader;
 import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
 import org.datavec.api.split.FileSplit;
@@ -22,6 +23,11 @@ import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+
+import org.nd4j.common.config.ND4JSystemProperties;
 
 public class ProofOfLearning implements ProofOfX {
 	
@@ -33,6 +39,8 @@ public class ProofOfLearning implements ProofOfX {
 	private Bloque bloque;
 	
 	public ProofOfLearning(Bloque pBloque, JSONObject pJsonObject) {
+		ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+		rootLogger.setLevel(Level.toLevel("error"));
 		bloque = pBloque;
 		poleConf = pJsonObject;
 		configurarRedNeuronal();
@@ -103,7 +111,6 @@ public class ProofOfLearning implements ProofOfX {
 		net = new MultiLayerNetwork(listBuilder.build());
 		net.init();
         net.setListeners(new ScoreIterationListener(1));
-        System.out.println(bloque.darIDEstacion() + " CONFIGURACION TERMINADA");
 	}
 
 	@Override
@@ -111,13 +118,11 @@ public class ProofOfLearning implements ProofOfX {
 		long millisInicio = System.currentTimeMillis();
 		net.fit(ds);
 		long tiempoEpocaMilisegundos = (System.currentTimeMillis() - millisInicio);
-		int epocas = 10; //(int)(MAX_MILLISECONDS / tiempoEpocaMilisegundos) - 1;
-		System.out.println(bloque.darIDEstacion() + " ANTES DE ENTRENAR");
+		int epocas = 10000;//(int)(MAX_MILLISECONDS / tiempoEpocaMilisegundos) - 1;
 		for(int i=0; i<epocas; i++) {
 			net.fit(ds);
 			Blockchain.esperarMillis(5);
 		}
-		System.out.println(bloque.darIDEstacion() + " DESPUES DE ENTRENAR");
 		return net;
 	}
 	
@@ -126,7 +131,11 @@ public class ProofOfLearning implements ProofOfX {
 		try {
 	        int batchSize = 4;
 	        RecordReader rr = new CSVRecordReader(1, ";");
-	        rr.initialize(new FileSplit(new File(filename)));
+	        File archivo = new File(filename);
+	        if (!archivo.exists()) {
+	        	System.out.println("No existe " + filename);
+	        }
+	        rr.initialize(new FileSplit(archivo));
 	        iter = new RecordReaderDataSetIterator(rr, batchSize, 7, 13, true);
 		} catch(Exception e) {
 			e.printStackTrace();
