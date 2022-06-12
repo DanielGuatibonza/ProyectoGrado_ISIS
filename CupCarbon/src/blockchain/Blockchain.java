@@ -43,7 +43,7 @@ public class Blockchain extends Thread {
 		estacion.getScript().addVariable("timestampUltimo", "");
 		estacion.getScript().addVariable("hashUltimo", "");
 		estacion.getScript().addVariable("rutaModelo", "");
-		
+
 		try (FileWriter file = new FileWriter("data/blockchain-" + estacion.getId() + ".json")) {
 			jsonArray = new JSONArray();
 			file.write(jsonArray.toString()); 
@@ -61,13 +61,19 @@ public class Blockchain extends Thread {
 				Bloque bloqueActual = bloques.get(bloques.size() - 1);
 				if(bloqueActual.darProof() instanceof ProofOfWork) {
 					if (bloqueActual.darEstado().equals(Estado.ABIERTO)) {
-						boolean bloqueGenerado = bloqueActual.ejecutarPoW();
-						if (bloqueGenerado) {
-							ManejadorBlockchain.ejecutarPoW = false;
-							estacion.getScript().addVariable("bloqueNuevo", bloqueActual.toString());
-						} else {
-							validando = true;
-							bloques.remove(bloques.size() - 1);								
+						if(ManejadorBlockchain.blockchainTamanioAceptable(estacion.getId())) {
+							boolean bloqueGenerado = bloqueActual.ejecutarPoW();
+							if (bloqueGenerado) {
+								ManejadorBlockchain.ejecutarPoW = false;
+								estacion.getScript().addVariable("bloqueNuevo", bloqueActual.toString());
+							} else {
+								validando = true;
+								esperarMillis(100);
+								bloques.remove(bloques.size() - 1);								
+							}
+						}
+						else {
+							esperarMillis(100);
 						}
 					}
 					else if (bloqueActual.darEstado().equals(Estado.EN_ESPERA)) {
@@ -88,73 +94,75 @@ public class Blockchain extends Thread {
 				}
 				else {
 					if (bloqueActual.darEstado().equals(Estado.ABIERTO)) {
-						String rutaModelo = bloqueActual.ejecutarPoLe();
-						ManejadorModelos.elegidosMejorModelo.put(estacion.getId(), 0);
+						if(ManejadorBlockchain.blockchainTamanioAceptable(estacion.getId())) {
+							ManejadorModelos.elegidosMejorModelo.put(estacion.getId(), 0);
+							String rutaModelo = bloqueActual.ejecutarPoLe();
+							estacion.getScript().addVariable("rutaModelo", rutaModelo);
 
-						estacion.getScript().addVariable("rutaModelo", rutaModelo);
-
-						DataSetIterator datasetIterator = null;
-						int numModelosRevisados = 0;
-						int idMejorModelo = 0;
-						double mejorMSE = Double.MAX_VALUE;
-						while (numModelosRevisados < ManejadorBlockchain.NUM_NODOS - 1) {
-							if (bloqueActual.darEstado().equals(Estado.ABIERTO) && bloqueActual.darTransacciones().size() > 0) {
-								bloqueActual.establecerEstado(Estado.EN_ESPERA);
-								crearCSVTemporal(bloqueActual);
-							}
-							if (rutasModelos.keySet().size() > 0 && bloqueActual.darEstado().equals(Estado.EN_ESPERA)) {
-								System.out.println(estacion.getId() + "ANTES: Entra en espera " + rutasModelos.keySet().size());
-								Set<Integer> llavesRutasModelos = rutasModelos.keySet();
-								for(int idActual : llavesRutasModelos) {
-									datasetIterator = ProofOfLearning.readCSVDataset("data/CSVs Temporales/bloque_actual_" + estacion.getId() + ".csv");
-									String rutaActual = rutasModelos.get(idActual);
-									System.out.println(" Quién soy: " + estacion.getId() + " - Quién valido: " + idActual);
-									double mseActual = Blockchain.revisarModelo(rutaActual, datasetIterator);
-									if(mseActual < mejorMSE) {
-										mejorMSE = mseActual;
-										idMejorModelo = idActual;
-									}
-									numModelosRevisados++;
+							DataSetIterator datasetIterator = null;
+							int numModelosRevisados = 0;
+							int idMejorModelo = 0;
+							double mejorMSE = Double.MAX_VALUE;
+							while (numModelosRevisados < ManejadorBlockchain.NUM_NODOS - 1) {
+								if (bloqueActual.darEstado().equals(Estado.ABIERTO) && bloqueActual.darTransacciones().size() > 0) {
+									bloqueActual.establecerEstado(Estado.EN_ESPERA);
+									crearCSVTemporal(bloqueActual);
 								}
-								rutasModelos = new HashMap<Integer, String>();
-							} else {
+								if (rutasModelos.keySet().size() > 0 && bloqueActual.darEstado().equals(Estado.EN_ESPERA)) {	
+									Set<Integer> llavesRutasModelos = rutasModelos.keySet();
+									for(int idActual : llavesRutasModelos) {
+										System.out.println(estacion.getId() + " VALIDANDO " + idActual);
+										datasetIterator = ProofOfLearning.readCSVDataset("data/CSVs Temporales/bloque_actual_" + estacion.getId() + ".csv");
+										String rutaActual = rutasModelos.get(idActual);
+										double mseActual = Blockchain.revisarModelo(rutaActual, datasetIterator);
+										if(mseActual < mejorMSE) {
+											mejorMSE = mseActual;
+											idMejorModelo = idActual;
+										}
+										numModelosRevisados++;
+									}
+									rutasModelos = new HashMap<Integer, String>();
+								} else {
+									esperarMillis(100);
+								}
+							}
+
+							ManejadorModelos.elegidosMejorModelo.put(idMejorModelo, ManejadorModelos.elegidosMejorModelo.get(idMejorModelo) + 1);
+							while(ManejadorModelos.numVotaciones() < ManejadorBlockchain.NUM_NODOS) {
 								esperarMillis(100);
 							}
-						}
-						System.out.println( estacion.getId() + " Salien2 primer while revisión");
 
-						ManejadorModelos.elegidosMejorModelo.put(idMejorModelo, ManejadorModelos.elegidosMejorModelo.get(idMejorModelo) + 1);
-						while(ManejadorModelos.numVotaciones() < ManejadorBlockchain.NUM_NODOS) {
-							esperarMillis(100);
-						}
+							int mejorID = ManejadorModelos.darMejorID();
+							if(mejorID == estacion.getId()) {
+								System.out.println("MEJOR: " + mejorID);
+								datasetIterator = ProofOfLearning.readCSVDataset("data/CSVs Temporales/bloque_actual_" + estacion.getId() + ".csv");
+								guardarMejorModelo(mejorID, datasetIterator);
 
-						System.out.println( estacion.getId() + " Salien2 segundo while votaciones");
-						int mejorID = ManejadorModelos.darMejorID();
-						if(mejorID == estacion.getId()) {
-							System.out.println(" MEJOR: " + mejorID);
-							datasetIterator = ProofOfLearning.readCSVDataset("data/CSVs Temporales/bloque_actual_" + estacion.getId() + ".csv");
-							guardarMejorModelo(mejorID, datasetIterator);
-							
-							bloqueActual.cerrarBloque();
-							bloqueActual.establecerTimestamp(new Date());
+								bloqueActual.cerrarBloque();
+								bloqueActual.asignarHash();
+								estacion.getScript().addVariable("bloqueNuevo", bloqueActual.toString());
 
-							estacion.getScript().addVariable("bloqueNuevo", bloqueActual.toString());	
-							//estacion.getScript().addVariable("timestampUltimo", bloqueActual.darTimestamp());
-							//estacion.getScript().addVariable("hashUltimo", bloqueActual.darHash());
-
-							eliminarTarea();
-							crearNuevoBloque(bloqueActual.darHash());
-							agregarBloqueAJSON(bloqueActual);							
+								eliminarTarea();
+								crearNuevoBloque(bloqueActual.darHash());
+								ManejadorBlockchain.ejecutarPoW = true;
+								agregarBloqueAJSON(bloqueActual);						
+							}
+							else {
+								esperarMillis(100);
+								bloques.remove(bloques.size() - 1);			
+								validando = true;
+							}
 						}
 						else {
-							bloques.remove(bloques.size() - 1);			
-							validando = true;
+							esperarMillis(100);
+							ManejadorBlockchain.printStatus();
 						}
 					}
 				}
 			}
 			else {
 				esperarMillis(100);
+				ManejadorBlockchain.printStatus();
 			}
 		}
 	}
@@ -187,6 +195,9 @@ public class Blockchain extends Thread {
 		Bloque nuevoBloque = new Bloque (bloqueStr, hashAnterior);
 		nuevoBloque.establecerHash(hashUltimo);
 		bloques.add(nuevoBloque);
+		if(nuevoBloque.darProof() instanceof ProofOfLearning) {
+			agregarBloqueAJSON(nuevoBloque);
+		}
 		crearNuevoBloque(hashUltimo);
 	}
 
@@ -201,7 +212,7 @@ public class Blockchain extends Thread {
 
 	public void establecerTimestamp(Date timestamp, String hashUltimo) {
 		Bloque actual = null;
-		for (int i = bloques.size() - 1; i >= 0; i-- ) {
+		for (int i = bloques.size() - 1; i >= 0; i--) {
 			actual = bloques.get(i);
 			if (actual.darEstado().equals(Bloque.Estado.CERRADO) && actual.darHash().equals(hashUltimo)) {
 				actual.establecerTimestamp(timestamp);
@@ -254,7 +265,6 @@ public class Blockchain extends Thread {
 		double mse = Double.MAX_VALUE;
 		try {
 			File archivo = new File(rutaModelo);
-			System.out.println(" - Ruta modelo en revisar: " + rutaModelo + " - Next? " + datasetIterator.hasNext());
 			MultiLayerNetwork net = MultiLayerNetwork.load(archivo, false);
 			RegressionEvaluation eval = net.evaluateRegression(datasetIterator);
 			mse = eval.averageMeanSquaredError();
@@ -318,7 +328,7 @@ public class Blockchain extends Thread {
 	}
 
 	public void crearCSVTemporal(Bloque bloqueActual) {
-		try (FileWriter file = new FileWriter("data/CSVs Temporales/bloque_actual_" + estacion.getId() + ".csv", false)) {
+		try (FileWriter file = new FileWriter("data/CSVs Temporales/bloque_actual_" + estacion.getId() + ".csv")) {
 			ArrayList<Transaccion> transacciones = bloqueActual.darTransacciones();
 			Transaccion transaccionActual;
 			file.write("temperatura;pH;terneza;mermaPorCoccion;colorL;colorA;colorB\n");

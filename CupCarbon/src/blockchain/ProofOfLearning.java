@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
 
-import org.nd4j.common.config.ND4JSystemProperties;
-
 public class ProofOfLearning implements ProofOfX {
 	
 	public static final int MAX_MILLISECONDS = 300000;
@@ -46,10 +44,7 @@ public class ProofOfLearning implements ProofOfX {
 		configurarRedNeuronal();
 	}
 	
-	public ProofOfLearning(String JSONObjectStr) {
-		poleConf = (new JSONArray(JSONObjectStr)).getJSONObject(0); 
-		configurarRedNeuronal();
-	}
+	public ProofOfLearning() {}
 	
 	public void configurarRedNeuronal() {
 		
@@ -115,10 +110,7 @@ public class ProofOfLearning implements ProofOfX {
 
 	@Override
 	public MultiLayerNetwork ejecutar() {
-		long millisInicio = System.currentTimeMillis();
-		net.fit(ds);
-		long tiempoEpocaMilisegundos = (System.currentTimeMillis() - millisInicio);
-		int epocas = 10000;//(int)(MAX_MILLISECONDS / tiempoEpocaMilisegundos) - 1;
+		int epocas = 2000;
 		for(int i=0; i<epocas; i++) {
 			net.fit(ds);
 			Blockchain.esperarMillis(5);
@@ -145,6 +137,6 @@ public class ProofOfLearning implements ProofOfX {
 	
 	@Override
 	public String toString () {
-		return "Proof of Learning, parametros " + poleConf;
+		return "Proof of Learning";
 	}
 }

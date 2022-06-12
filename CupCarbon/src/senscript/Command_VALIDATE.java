@@ -2,7 +2,6 @@ package senscript;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import org.bouncycastle.util.encoders.Hex;
@@ -43,7 +42,6 @@ public class Command_VALIDATE extends Command {
 		String[] partes = bloque.split(" % ");
 		String hashAnterior = partes[partes.length - 1].split("= ")[1];
 		Blockchain blockchain = ManejadorBlockchain.blockchains.get(sensor.getId());
-
 		while (!blockchain.darValidando()) {
 			try {
 				Thread.sleep(100);
@@ -52,20 +50,19 @@ public class Command_VALIDATE extends Command {
 			}
 		}
 
-		if (bloque.contains("Work"))
-		{
-			ArrayList<Bloque> bloques = blockchain.darBloques();
-			MessageDigest digest;
-
-			try {
-				digest = MessageDigest.getInstance("SHA-256");
+		MessageDigest digest;
+		try {
+			digest = MessageDigest.getInstance("SHA-256");
+			byte[] encodedhash = digest.digest(bloque.getBytes(StandardCharsets.UTF_8));
+			String hashActual = new String(Hex.encode(encodedhash)); 
+			if (bloque.contains("Work"))
+			{
+				ArrayList<Bloque> bloques = blockchain.darBloques();
 				String ultimoBloqueHash = "null";
 				if (bloques.size() > 0) {
 					ultimoBloqueHash = bloques.get(bloques.size() - 1).darHash();
 				}
 				if (hashAnterior.equals(ultimoBloqueHash)) {
-					byte[] encodedhash = digest.digest(bloque.getBytes(StandardCharsets.UTF_8));
-					String hashActual = new String(Hex.encode(encodedhash)); 
 					System.out.println(sensor.getId() + " VALIDANDO " + hashActual);
 
 					String ceros = ""; 
@@ -75,23 +72,29 @@ public class Command_VALIDATE extends Command {
 					// Detener ejecución del bloque y agregar el bloque recibido
 					if (hashActual.startsWith(ceros)) {
 						sensor.getScript().addVariable(arg3, sensor.getScript().getVariableValue(arg2));
-						System.out.println(sensor.getId() + " VALIDATE - ReemplazarBloque ");
+						System.out.println(sensor.getId() + " VALIDATE PoW - ReemplazarBloque ");
 						blockchain.reemplazarBloque(bloque, hashAnterior, hashActual);	
 						blockchain.establecerValidando(false);
 					}
 					else {
+						System.out.println(sensor.getId() + " INVALIDO POR ERROR DE CEROS: " + hashActual);
 						sensor.getScript().addVariable(arg3, "invalido");
 					}
 				}
 				else {
+					System.out.println(sensor.getId() + " INVALIDO POR ERROR DE HASH: Hash local=" + ultimoBloqueHash + " - Bloque Recibido=" + bloque);
 					sensor.getScript().addVariable(arg3, "invalido");
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
-		}
-		else {
-			sensor.getScript().addVariable(arg3, sensor.getScript().getVariableValue(arg2));
+			else {
+				System.out.println(sensor.getId() + " BLOQUE POLE:\n" + bloque);
+				sensor.getScript().addVariable(arg3, "pole");
+				System.out.println(sensor.getId() + " VALIDATE PoLe - ReemplazarBloque");
+				blockchain.reemplazarBloque(bloque, hashAnterior, hashActual);	
+				blockchain.establecerValidando(false);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		System.out.println(sensor.getId() + " ARG3 " + sensor.getScript().getVariableValue(arg3));
 		return 0;

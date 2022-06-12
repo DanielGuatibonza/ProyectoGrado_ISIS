@@ -5,6 +5,7 @@ keysecc priv pub
 
 loop
 	delay 1000
+	atget id id
 	read m
 	rdata m tipo idN params
 	if(tipo=="registroEstacion")

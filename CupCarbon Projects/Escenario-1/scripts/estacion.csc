@@ -47,6 +47,18 @@ loop
 					send mensaje idRepetidor1
 				end
 			end
+			if((idRepetidor1!=idN) && (idRepetidor2!=idN))
+				if(idRepetidor2!=-1)
+    					cipher mensajeDescifrado idRepetidor2 mensajeCifrado
+					data mensaje "mensajeARepetidor" id mensajeCifrado
+					send mensaje idRepetidor2
+				end
+				if(idRepetidor1!=-1)
+					cipher mensajeDescifrado idRepetidor1 mensajeCifrado
+					data mensaje "mensajeARepetidor" id mensajeCifrado
+					send mensaje idRepetidor1
+				end	
+			end
 		end
 	end
 	if(tipo=="bloqueAValidar")
@@ -67,7 +79,7 @@ loop
 			end
 		end
 		validateblock bloque idEstacionGeneradora respuestaValidacion
-		if(respuestaValidacion!="invalido")
+		if((respuestaValidacion!="invalido") && (respuestaValidacion!="pole"))
 			if(idRepetidor1==idN)
 				cipher respuestaValidacion idRepetidor1 respuestaCifrada
 				data mensajeValidacion "bloqueValidoARepetidor" id respuestaCifrada

@@ -23,9 +23,9 @@ loop
 		data mensaje "mensaje" id mensajeCifrado
 		send mensaje idN
 	end
-	if(contador==60)
+	if(contador==120)
 		set contador 0
-		updatetime 60
+		updatetime 120
 		data mensajeDetectar "detectarEstacion" id pub
 		send mensajeDetectar *
 	end	

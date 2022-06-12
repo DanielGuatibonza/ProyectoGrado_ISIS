@@ -22,7 +22,6 @@ public class Command_SAVE_DATA extends Command {
 		for (String t: transacciones) {
 			ManejadorBlockchain.blockchains.get(sensor.getId()).recibirTransaccion(t);
 		}
-		System.out.println(sensor.getId() + " RECIBI DATOS " + transacciones.length);
 		return 0;
 	}
 

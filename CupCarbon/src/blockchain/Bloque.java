@@ -19,7 +19,7 @@ import org.json.JSONTokener;
 
 public class Bloque {
 
-	public final static SimpleDateFormat FORMATO = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+	public final static SimpleDateFormat FORMATO = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 	private int idEstacion;
 	private String hash;
@@ -63,9 +63,10 @@ public class Bloque {
 			}
 			else {
 				proof = new ProofOfLearning(this, listaTareas.getJSONObject(0));
+				timestamp = new Date();
 			}
 			
-
+			System.out.println("BLOQUE CREADO: " + toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -91,7 +92,7 @@ public class Bloque {
 				proof = new ProofOfWork(this);
 			}
 			else {
-				proof = new ProofOfLearning(partes[3].split(" parametros ")[1]);
+				proof = new ProofOfLearning();
 			}
 			
 			idEstacion = Integer.parseInt(partes[4].split("= ")[1]);
@@ -161,7 +162,6 @@ public class Bloque {
 
 	public void cerrarBloque () {
 		estado = Estado.CERRADO;
-		timestamp = new Date ();
 	}
 
 	public void agregarTransaccion (Transaccion nueva) {
@@ -174,17 +174,25 @@ public class Bloque {
 		byte[] encodedhash = digest.digest(transaccionesStr.getBytes(StandardCharsets.UTF_8));
 		merkleRoot = new String(Hex.encode(encodedhash));
 	}
+	
+	public void asignarHash() {
+		byte[] encodedhash = digest.digest(toString().getBytes(StandardCharsets.UTF_8));
+		hash = new String(Hex.encode(encodedhash));
+	}
 
 	// True si lo generó, False si lo recibió
 	public boolean ejecutarPoW () {
-		String respuesta = (String)proof.ejecutar();
+		System.out.println(idEstacion + " - Ejecutando PoW");
+		String respuesta = (String) proof.ejecutar();
 		boolean ejecuto = true;
 		if (respuesta == null) {
 			ejecuto = false;
+			System.out.println(idEstacion + " - Terminó PoW, pero no ganó");
 		}
 		else {
 			hash = respuesta;
 			estado = Estado.EN_ESPERA;
+			System.out.println(idEstacion + " - Terminó PoW y ganó");
 		}
 		return ejecuto;
 	}
@@ -197,8 +205,6 @@ public class Bloque {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		byte[] encodedhash = digest.digest(toString().getBytes(StandardCharsets.UTF_8));
-		hash = new String(Hex.encode(encodedhash));
 		System.out.println(idEstacion + " MODELO GUARDADO " + ruta);
 		return ruta;
 	}
@@ -209,7 +215,7 @@ public class Bloque {
 		bloqueJson.put("idEstacion", idEstacion);
 		bloqueJson.put("hash", hash);
 		bloqueJson.put("hashAnterior", hashAnterior);
-		bloqueJson.put("timestamp", timestamp.toString());
+		bloqueJson.put("timestamp", FORMATO.format(timestamp));
 		bloqueJson.put("merkleRoot", merkleRoot);
 		bloqueJson.put("nonce", nonce);
 		

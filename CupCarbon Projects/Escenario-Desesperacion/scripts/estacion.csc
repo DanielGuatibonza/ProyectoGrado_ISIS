@@ -8,10 +8,10 @@ initblockchain
 
 data mensaje "registroEstacion" id pub
 send mensaje *
-cprint mensaje
 
 loop
 	delay 1000
+	atget id id
 	read m
 	rdata m tipo idN params
 	if(tipo=="registroRepetidor")
@@ -32,6 +32,7 @@ loop
 	if(tipo=="mensaje")
 		decipher params idN mensajeDescifrado
 		savedata mensajeDescifrado
+		cprint reenviarTransaccion
 		if(reenviarTransaccion=="true")
 			if(idRepetidor1==idN)
 				if(idRepetidor2!=-1)
@@ -46,6 +47,20 @@ loop
 					data mensaje "mensajeARepetidor" id mensajeCifrado
 					send mensaje idRepetidor1
 				end
+			end
+			if((idRepetidor1!=idN) && (idRepetidor2!=idN))
+				if(idRepetidor2!=-1)
+					cprint idRepetidor2
+    					cipher mensajeDescifrado idRepetidor2 mensajeCifrado
+					data mensaje "mensajeARepetidor" id mensajeCifrado
+					send mensaje idRepetidor2
+				end
+				if(idRepetidor1!=-1)
+    					cprint idRepetidor1
+					cipher mensajeDescifrado idRepetidor1 mensajeCifrado
+					data mensaje "mensajeARepetidor" id mensajeCifrado
+					send mensaje idRepetidor1
+				end	
 			end
 		end
 	end
@@ -120,8 +135,8 @@ loop
 	end
 	if(tipo=="rutaModelo")
 		decipher params idN contenido
-		rdata contenido idEstacion rutaModelo
-		saveroute idEstacion rutaModelo
+		rdata contenido idEstacion rutaModeloRecv
+		saveroute idEstacion rutaModeloRecv
 		if(idRepetidor1==idN)
 			if(idRepetidor2!=-1)
     				cipher contenido idRepetidor2 contenidoCifrado
