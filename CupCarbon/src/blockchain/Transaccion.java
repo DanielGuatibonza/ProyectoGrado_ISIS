@@ -1,6 +1,5 @@
 package blockchain;
 
-import java.text.ParseException;
 import java.util.Date;
 
 import org.json.JSONObject;
@@ -71,11 +70,7 @@ public class Transaccion {
 		String[] partes = parametros.split("!");
 		idSensor = Integer.parseInt(partes[0].split(": ")[1]);
 		
-		try {
-			timestamp = Bloque.FORMATO.parse(partes[1].split(": ")[1]);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		timestamp = Bloque.parseDate(partes[1].split(": ")[1]);
 		
 		tiempoTranscurrido = Integer.parseInt(partes[2].split(": ")[1]);
 		latitud = Double.parseDouble(partes[3].split(": ")[1]);
@@ -96,7 +91,7 @@ public class Transaccion {
 	public JSONObject darJSONObject() {
 		JSONObject transaccionJson = new JSONObject();
 		transaccionJson.put("idSensor", idSensor);
-		transaccionJson.put("timestamp", timestamp.toString());
+		transaccionJson.put("timestamp", Bloque.formatDate(timestamp));
 		transaccionJson.put("tiempoTranscurrido", tiempoTranscurrido);
 		transaccionJson.put("latitud", latitud);
 		transaccionJson.put("longitud", longitud);
@@ -112,7 +107,7 @@ public class Transaccion {
 	
 	@Override
 	public String toString () {
-		return "ID Sensor: " + idSensor + "!Timestamp: " + Bloque.FORMATO.format(timestamp) + "!Tiempo transcurrido: " + tiempoTranscurrido + "!Latitud: " + 
+		return "ID Sensor: " + idSensor + "!Timestamp: " + Bloque.formatDate(timestamp) + "!Tiempo transcurrido: " + tiempoTranscurrido + "!Latitud: " + 
 				latitud + "!Longitud: " + longitud + "!pH: " + pH + "!Temperatura: " + temperatura + "!Terneza: " + terneza + "!Merma por coccion: " + mermaPorCoccion + 
 				"!Color: (L* _ " + colorL + ", a* _ " + colorA + ", b* _ " + colorB + ")";
 	}

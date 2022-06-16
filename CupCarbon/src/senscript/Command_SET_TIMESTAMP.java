@@ -1,6 +1,5 @@
 package senscript;
 
-import java.text.ParseException;
 import java.util.Date;
 
 import blockchain.Blockchain;
@@ -32,11 +31,7 @@ public class Command_SET_TIMESTAMP extends Command {
 		String hashBloque = sensor.getScript().getVariableValue(arg2);
 		Blockchain blockchain = ManejadorBlockchain.blockchains.get(sensor.getId());
 		Date timestamp = null;
-		try {
-			timestamp = Bloque.FORMATO.parse(sensor.getScript().getVariableValue(arg1));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		timestamp = Bloque.parseDate(sensor.getScript().getVariableValue(arg1));
 		System.out.println("Set timestamp " + hashBloque);
 		blockchain.establecerTimestamp(timestamp, hashBloque);
 		return 0;

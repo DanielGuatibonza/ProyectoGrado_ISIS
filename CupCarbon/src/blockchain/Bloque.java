@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +21,18 @@ import org.json.JSONTokener;
 public class Bloque {
 
 	public final static SimpleDateFormat FORMATO = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+	public static synchronized String formatDate(Date fecha) {
+		return FORMATO.format(fecha);
+	}
+	public static synchronized Date parseDate(String fechaStr) {
+		Date fecha = null;
+		try {
+			fecha =  FORMATO.parse(fechaStr);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return fecha;
+	}
 
 	private int idEstacion;
 	private String hash;
@@ -54,7 +67,7 @@ public class Bloque {
 			estado = Estado.ABIERTO;
 			digest = MessageDigest.getInstance("SHA-256");
 			hashAnterior = hash;
-			timestamp = FORMATO.parse("1970-01-01 00:00:00");
+			timestamp = parseDate("1970-01-01 00:00:00");
 			JSONTokener tokener = new JSONTokener(is);
 			JSONArray listaTareas = new JSONArray(tokener);
 
@@ -96,7 +109,7 @@ public class Bloque {
 			}
 			
 			idEstacion = Integer.parseInt(partes[4].split("= ")[1]);
-			timestamp = FORMATO.parse(partes[5].split("= ")[1]);
+			timestamp = parseDate(partes[5].split("= ")[1]);
 			hashAnterior = partes[partes.length - 1].split("= ")[1];
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -129,7 +142,7 @@ public class Bloque {
 	}
 	
 	public String darTimestamp () {
-		return FORMATO.format(timestamp);
+		return formatDate(timestamp);
 	}
 
 	public ArrayList<Transaccion> darTransacciones () {
@@ -215,7 +228,7 @@ public class Bloque {
 		bloqueJson.put("idEstacion", idEstacion);
 		bloqueJson.put("hash", hash);
 		bloqueJson.put("hashAnterior", hashAnterior);
-		bloqueJson.put("timestamp", FORMATO.format(timestamp));
+		bloqueJson.put("timestamp", formatDate(timestamp));
 		bloqueJson.put("merkleRoot", merkleRoot);
 		bloqueJson.put("nonce", nonce);
 		
@@ -232,6 +245,6 @@ public class Bloque {
 
 	@Override
 	public String toString () {
-		return "Transacciones= " + transaccionesStr + " % Merkle root= " + merkleRoot + " % Nonce= " + nonce + " % Proof= " + proof.toString() + " % ID Estacion= " + idEstacion + " % Timestamp= " + FORMATO.format(timestamp) + " % Hash anterior= " + hashAnterior;  
+		return "Transacciones= " + transaccionesStr + " % Merkle root= " + merkleRoot + " % Nonce= " + nonce + " % Proof= " + proof.toString() + " % ID Estacion= " + idEstacion + " % Timestamp= " + formatDate(timestamp) + " % Hash anterior= " + hashAnterior;  
 	}
 }
