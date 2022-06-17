@@ -107,6 +107,11 @@ public class ProofOfLearning implements ProofOfX {
 		net.init();
         net.setListeners(new ScoreIterationListener(1));
 	}
+	
+	public void clear() {
+		net = null;
+		ds = null;
+	}
 
 	@Override
 	public MultiLayerNetwork ejecutar() {

@@ -218,6 +218,7 @@ public class Bloque {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		((ProofOfLearning) proof).clear();
 		System.out.println(idEstacion + " MODELO GUARDADO " + ruta);
 		return ruta;
 	}

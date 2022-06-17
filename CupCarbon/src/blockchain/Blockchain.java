@@ -139,6 +139,7 @@ public class Blockchain extends Thread {
 								guardarMejorModelo(mejorID, datasetIterator);
 
 								bloqueActual.cerrarBloque();
+								bloqueActual.establecerTimestamp(new Date());
 								bloqueActual.asignarHash();
 								estacion.getScript().addVariable("bloqueNuevo", bloqueActual.toString());
 
