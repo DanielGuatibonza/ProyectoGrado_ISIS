@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class ProofOfWork implements ProofOfX {
 
-	public static final int DIFICULTAD = 6;
+	public static final int DIFICULTAD = 7;
 	private Bloque bloque;
 	//private boolean ejecutar;
 	private MessageDigest digest;

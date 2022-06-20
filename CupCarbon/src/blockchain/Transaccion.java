@@ -107,9 +107,9 @@ public class Transaccion {
 	
 	@Override
 	public String toString () {
-		return "ID Sensor: " + idSensor + "!Timestamp: " + Bloque.formatDate(timestamp) + "!Tiempo transcurrido: " + tiempoTranscurrido + "!Latitud: " + 
-				latitud + "!Longitud: " + longitud + "!pH: " + pH + "!Temperatura: " + temperatura + "!Terneza: " + terneza + "!Merma por coccion: " + mermaPorCoccion + 
-				"!Color: (L* _ " + colorL + ", a* _ " + colorA + ", b* _ " + colorB + ")";
+		return "ID: " + idSensor + "!TS: " + Bloque.formatDate(timestamp) + "!Tt: " + tiempoTranscurrido + "!Lat: " + 
+				latitud + "!Lon: " + longitud + "!pH: " + pH + "!T: " + temperatura + "!Tz: " + terneza + "!MC: " + mermaPorCoccion + 
+				"!C: (L* _ " + colorL + ", a* _ " + colorA + ", b* _ " + colorB + ")";
 	}
 
 	@Override

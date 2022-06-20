@@ -246,6 +246,6 @@ public class Bloque {
 
 	@Override
 	public String toString () {
-		return "Transacciones= " + transaccionesStr + " % Merkle root= " + merkleRoot + " % Nonce= " + nonce + " % Proof= " + proof.toString() + " % ID Estacion= " + idEstacion + " % Timestamp= " + formatDate(timestamp) + " % Hash anterior= " + hashAnterior;  
+		return "TL= " + transaccionesStr + " % MR= " + merkleRoot + " % N= " + nonce + " % Proof= " + proof.toString() + " % ID_E= " + idEstacion + " % TS= " + formatDate(timestamp) + " % HA= " + hashAnterior;  
 	}
 }
